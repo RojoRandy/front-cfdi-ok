@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 rounded-md bg-cyan-500 text-white hover:bg-cyan-700 focus:ring-4 focus:ring-cyan-200;
+  }
+  .btn-secondary {
+    @apply border-2 border-gray-300 px-4 py-2 rounded-md focus:outline-none hover:bg-gray-100 hover:text-cyan-600 focus:ring-4 focus:ring-gray-100;
+  }
+}
