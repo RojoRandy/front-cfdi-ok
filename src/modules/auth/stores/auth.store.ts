@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
-import { AuthStatus, type User } from '../interfaces';
-import { LoginAction } from '../actions';
+import { AuthStatus, type SignInResponse, type User } from '../interfaces';
+import { SignInAction } from '../actions';
 import { useLocalStorage } from '@vueuse/core';
 import { RegisterAction } from '../actions/register.action';
 
@@ -10,21 +10,27 @@ export const useAuthStore = defineStore('AuthStore', () => {
   const user = ref<User | undefined>();
   const token = ref(useLocalStorage('token', ''));
 
-  const login = async (email: string, password: string) => {
-    try {
-      const loginResponse = await LoginAction(email, password);
+  const errorMessage = ref('');
 
-      if (!loginResponse.ok) {
+  const signIn = async (email: string, password: string) => {
+    try {
+      const response = await SignInAction(email, password);
+
+      if (!response.success) {
         logout();
+        errorMessage.value = response.message;
         return false;
       }
 
-      user.value = loginResponse.user;
-      token.value = loginResponse.token;
+      const signInResponse: SignInResponse = response.data;
+
+      user.value = signInResponse.user;
+      token.value = signInResponse.token;
       authStatus.value = AuthStatus.Authenticated;
-      return true;
+      return response;
     } catch (error) {
       logout();
+      errorMessage.value = 'No se pudo realizar la petición, por favor intente de nuevo';
       return false;
     }
   };
@@ -36,11 +42,7 @@ export const useAuthStore = defineStore('AuthStore', () => {
     return true;
   };
 
-  const register = async (
-    fullName: string,
-    email: string,
-    password: string,
-  ) => {
+  const register = async (fullName: string, email: string, password: string) => {
     try {
       const registerResponse = await RegisterAction(fullName, email, password);
 
@@ -59,19 +61,39 @@ export const useAuthStore = defineStore('AuthStore', () => {
     }
   };
 
+  const checkAuthStatus = async (): Promise<boolean> => {
+    try {
+      const statusResp = await checkAuthAction();
+
+      if (!statusResp.ok) {
+        logout();
+        return false;
+      }
+
+      authStatus.value = AuthStatus.Authenticated;
+      user.value = statusResp.user;
+      token.value = statusResp.token;
+      return true;
+    } catch (error) {
+      logout();
+      return false;
+    }
+  }
+
   return {
     user,
     token,
     authStatus,
+    errorMessage,
 
     //Getter
     isChecking: computed(() => authStatus.value === AuthStatus.Checking),
     isAuhtenticated: computed(() => authStatus.value === AuthStatus.Checking),
     //TODO: getter para saber si es Admin o no
-    username: computed(() => user.value?.fullName),
+    //username: computed(() => user.value?.fullName),
 
     //Actions
-    login,
+    signIn,
     logout,
     register,
   };

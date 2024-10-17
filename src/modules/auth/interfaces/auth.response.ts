@@ -1,6 +1,6 @@
 import type { User } from './user.interface';
 
-export interface AuthResponse {
+export interface SignInResponse {
   user: User;
   token: string;
 }
