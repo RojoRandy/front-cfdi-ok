@@ -62,12 +62,12 @@ import { ref } from 'vue';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as zod from 'zod';
+import { useToast } from 'vue-toastification';
 
 import TextInput from '@/modules/common/components/TextInput.vue';
 import RegisterView from './RegisterView.vue';
 
 import { useAuthStore } from '../stores/auth.store';
-import { useToast } from 'vue-toastification';
 
 const authStore = useAuthStore();
 const toast = useToast();
@@ -83,7 +83,7 @@ const validationSchema = toTypedSchema(
   }),
 );
 
-const { handleSubmit, errors } = useForm({
+const { handleSubmit } = useForm({
   validationSchema,
 });
 

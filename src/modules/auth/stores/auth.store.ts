@@ -5,6 +5,7 @@ import { SignInAction } from '../actions';
 import { useLocalStorage } from '@vueuse/core';
 import { RegisterAction } from '../actions/register.action';
 import { checkAuthAction } from '../actions/check-auth.action';
+import type { RegisterRequest } from '../interfaces/register.request';
 
 export const useAuthStore = defineStore('AuthStore', () => {
   const authStatus = ref<AuthStatus>(AuthStatus.Checking);
@@ -43,12 +44,13 @@ export const useAuthStore = defineStore('AuthStore', () => {
     return true;
   };
 
-  const register = async (fullName: string, email: string, password: string) => {
+  const register = async (registerRequest: RegisterRequest) => {
     try {
-      const response = await RegisterAction(fullName, email, password);
+      const response = await RegisterAction(registerRequest);
 
       if (!response.success) {
         logout();
+        errorMessage.value = response.message;
         return false;
       }
       const registerResponse: SignInResponse = response.data;
@@ -82,6 +84,10 @@ export const useAuthStore = defineStore('AuthStore', () => {
     }
   }
 
+  const setErrorMessage = (message: string) => {
+    errorMessage.value = message;
+  }
+
   return {
     user,
     token,
@@ -100,6 +106,7 @@ export const useAuthStore = defineStore('AuthStore', () => {
     signIn,
     logout,
     register,
-    checkAuthStatus
+    checkAuthStatus,
+    setErrorMessage
   };
 });

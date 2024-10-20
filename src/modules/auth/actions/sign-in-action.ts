@@ -8,7 +8,6 @@ export const SignInAction = async (
   password: string,
 ): Promise<SchemaResponse<SignInResponse> | SchemaResponse<any>> => {
   try {
-    console.log('LOGIN')
     const { data: response } = await cfdiOkApi.post<
       SchemaResponse<SignInResponse>
     >('/auth/sign-in', {

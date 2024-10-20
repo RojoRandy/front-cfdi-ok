@@ -1,20 +1,14 @@
-import { tesloApi } from '@/api/tesloApi';
 import type { SignInResponse } from '../interfaces';
 import { cfdiOkApi } from '@/api/cfdiOkApi';
 import type { SchemaResponse } from '@/modules/common/interfaces/api-schema-response';
 import { isAxiosError } from 'axios';
+import type { RegisterRequest } from '../interfaces/register.request';
 
 export const RegisterAction = async (
-  email: string,
-  password: string,
-  confirm_password: string
+  registerRequest: RegisterRequest
 ): Promise<SchemaResponse<SignInResponse> | SchemaResponse<any>> => {
   try {
-    const { data } = await cfdiOkApi.post<SchemaResponse<SignInResponse>>('/auth/registration', {
-      email,
-      password,
-      confirm_password
-    });
+    const { data } = await cfdiOkApi.post<SchemaResponse<SignInResponse>>('/auth/register', registerRequest);
 
     return data
   } catch (error) {
