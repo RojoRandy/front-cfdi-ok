@@ -4,6 +4,7 @@ import { AuthStatus, type SignInResponse, type User } from '../interfaces';
 import { SignInAction } from '../actions';
 import { useLocalStorage } from '@vueuse/core';
 import { RegisterAction } from '../actions/register.action';
+import { checkAuthAction } from '../actions/check-auth.action';
 
 export const useAuthStore = defineStore('AuthStore', () => {
   const authStatus = ref<AuthStatus>(AuthStatus.Checking);
@@ -44,13 +45,13 @@ export const useAuthStore = defineStore('AuthStore', () => {
 
   const register = async (fullName: string, email: string, password: string) => {
     try {
-      const registerResponse = await RegisterAction(fullName, email, password);
+      const response = await RegisterAction(fullName, email, password);
 
-      if (!registerResponse.ok) {
+      if (!response.success) {
         logout();
         return false;
       }
-
+      const registerResponse: SignInResponse = response.data;
       user.value = registerResponse.user;
       token.value = registerResponse.token;
       authStatus.value = AuthStatus.Authenticated;
@@ -63,16 +64,17 @@ export const useAuthStore = defineStore('AuthStore', () => {
 
   const checkAuthStatus = async (): Promise<boolean> => {
     try {
-      const statusResp = await checkAuthAction();
+      const response = await checkAuthAction();
 
-      if (!statusResp.ok) {
+      if (!response.success) {
         logout();
         return false;
       }
 
+      const checkAuthResponse: SignInResponse = response.data;
       authStatus.value = AuthStatus.Authenticated;
-      user.value = statusResp.user;
-      token.value = statusResp.token;
+      user.value = checkAuthResponse.user;
+      token.value = checkAuthResponse.token;
       return true;
     } catch (error) {
       logout();
@@ -88,7 +90,9 @@ export const useAuthStore = defineStore('AuthStore', () => {
 
     //Getter
     isChecking: computed(() => authStatus.value === AuthStatus.Checking),
-    isAuhtenticated: computed(() => authStatus.value === AuthStatus.Checking),
+    isAuthenticated: computed(() => authStatus.value === AuthStatus.Authenticated),
+    isUnauthenticated: computed(() => authStatus.value === AuthStatus.Unauthenticated),
+    isAdmin: computed(()=> user.value?.role === 'admin'),
     //TODO: getter para saber si es Admin o no
     //username: computed(() => user.value?.fullName),
 
@@ -96,5 +100,6 @@ export const useAuthStore = defineStore('AuthStore', () => {
     signIn,
     logout,
     register,
+    checkAuthStatus
   };
 });

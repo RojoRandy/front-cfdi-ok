@@ -1,35 +1,28 @@
-import { tesloApi } from '@/api/tesloApi';
-import type { AuthResponse, User } from '../interfaces';
+import type { SignInResponse } from '../interfaces';
 import { isAxiosError } from 'axios';
+import type { SchemaResponse } from '@/modules/common/interfaces/api-schema-response';
+import { cfdiOkApi } from '@/api/cfdiOkApi';
 
-interface CheckError {
-  ok: false;
-}
-
-interface CheckSuccess {
-  ok: true;
-  user: User;
-  token: string;
-}
-
-export const checkAuthAction = async (): Promise<CheckError | CheckSuccess> => {
+export const checkAuthAction = async (): Promise<SchemaResponse<SignInResponse> | SchemaResponse<any>> => {
   try {
     const localToken = localStorage.getItem('token');
     if (localToken && localToken.length < 10) {
-      return { ok: false };
+      return { 
+        success: false,
+        message: 'No se pudo verificar la sesión',
+        data: undefined
+      };
     }
 
-    const { data } = await tesloApi.get<AuthResponse>('/auth/check-status');
+    const { data } = await cfdiOkApi.get<SchemaResponse<SignInResponse>>('/auth/check-status');
 
-    return {
-      ok: true,
-      user: data.user,
-      token: data.token,
-    };
+    return data
   } catch (error) {
     if (isAxiosError(error) && error.response?.status === 401) {
-      return {
-        ok: false,
+      return { 
+        success: false,
+        message: 'No se pudo verificar la sesión',
+        data: undefined
       };
     }
 

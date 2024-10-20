@@ -5,13 +5,8 @@
     <h1 class="text-[20px] md:text-[20px]">Tus facturas a unos cuantos pasos</h1>
   </div>
 
-  <div class="flex flex-col mt-10 mb-5">
-    <h1 class="text-[24px] font-semibold">Inicia Sesión</h1>
-    <h1 class="text-[16px] font-semibold">Ingresa tu correo y contraseña</h1>
-  </div>
-
   <form @submit="onSubmit">
-    <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-2 my-4">
       <TextInput
         id="login_email"
         name="email"
@@ -36,22 +31,30 @@
       >
         Iniciar Sesion
       </button>
-
-      <div class="flex justify-center items-center gap-4">
-        <hr class="flex-1 border-gray-400 opacity-50" />
-        <span class="font-semibold text-[14px] select-none">O</span>
-        <hr class="flex-1 border-gray-400 opacity-50" />
-      </div>
-
-      <button
-        type="button"
-        class="btn-secondary"
-        :disabled="loading"
-      >
-        Crear cuenta
-      </button>
     </div>
   </form>
+  
+  <div class="flex flex-col gap-4">
+    <div class="flex justify-center items-center gap-4">
+      <hr class="flex-1 border-gray-400 opacity-50" />
+      <span class="font-semibold text-[14px] select-none">O</span>
+      <hr class="flex-1 border-gray-400 opacity-50" />
+    </div>
+
+    <button
+      type="button"
+      class="btn-secondary"
+      :disabled="loading"
+      @click="isNewAccount = true"
+    >
+      Crear cuenta
+    </button>
+  </div>
+
+  <RegisterView 
+    :is-new-account="isNewAccount"
+    @cancel="isNewAccount = false"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -61,6 +64,7 @@ import { toTypedSchema } from '@vee-validate/zod';
 import * as zod from 'zod';
 
 import TextInput from '@/modules/common/components/TextInput.vue';
+import RegisterView from './RegisterView.vue';
 
 import { useAuthStore } from '../stores/auth.store';
 import { useToast } from 'vue-toastification';
@@ -94,4 +98,8 @@ const onSubmit = handleSubmit(async (values) => {
 
   loading.value = false;
 });
+
+
+const isNewAccount = ref(false)
+
 </script>
