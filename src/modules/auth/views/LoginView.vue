@@ -33,7 +33,7 @@
       </button>
     </div>
   </form>
-  
+
   <div class="flex flex-col gap-4">
     <div class="flex justify-center items-center gap-4">
       <hr class="flex-1 border-gray-400 opacity-50" />
@@ -51,7 +51,7 @@
     </button>
   </div>
 
-  <RegisterView 
+  <RegisterView
     :is-new-account="isNewAccount"
     @cancel="isNewAccount = false"
   />
@@ -99,7 +99,5 @@ const onSubmit = handleSubmit(async (values) => {
   loading.value = false;
 });
 
-
-const isNewAccount = ref(false)
-
+const isNewAccount = ref(false);
 </script>

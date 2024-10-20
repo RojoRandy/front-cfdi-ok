@@ -2,7 +2,7 @@ import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
 import { AuthStatus, type SignInResponse, type User } from '../interfaces';
 import { SignInAction } from '../actions';
-import { useLocalStorage } from '@vueuse/core';
+import { useStorage } from '@vueuse/core';
 import { RegisterAction } from '../actions/register.action';
 import { checkAuthAction } from '../actions/check-auth.action';
 import type { RegisterRequest } from '../interfaces/register.request';
@@ -10,7 +10,7 @@ import type { RegisterRequest } from '../interfaces/register.request';
 export const useAuthStore = defineStore('AuthStore', () => {
   const authStatus = ref<AuthStatus>(AuthStatus.Checking);
   const user = ref<User | undefined>();
-  const token = ref(useLocalStorage('token', ''));
+  const token = ref(useStorage('token', ''));
 
   const errorMessage = ref('');
 

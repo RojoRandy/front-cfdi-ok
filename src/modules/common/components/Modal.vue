@@ -1,48 +1,70 @@
 <template>
   <!-- <Transition name="modal-fade"> -->
-    <div 
-        class="fixed inset-0 flex justify-center items-center bg-cyan-950 bg-opacity-80 z-20"
-        role="dialog"
-        aria-labelledby="modalTitle"
-        aria-describedby="modalDescription"
-      >
-    </div>
+  <div
+    class="fixed inset-0 flex justify-center items-center bg-cyan-950 bg-opacity-80 z-20"
+    role="dialog"
+    aria-labelledby="modalTitle"
+    aria-describedby="modalDescription"
+  ></div>
 
-    <div class="fixed inset-0 z-20 overflow-y-auto">
-      <div class="flex justify-center">
+  <div class="fixed inset-0 z-20 overflow-y-auto">
+    <div class="flex justify-center">
+      <div class="w-10/12 md:w-3/4 lg:w-1/2 bg-white my-8 rounded-lg">
+        <div class="flex flex-col">
+          <header
+            id="modalTitle"
+            class="flex flex-row justify-between px-4 py-4 border-b-2 text-xl font-semibold"
+          >
+            <div class="w-full text-center">
+              <slot name="header">
+                {{ title }}
+              </slot>
+            </div>
+            <Close
+              aria-label="Close modal"
+              class="fill-cyan-600 hover:cursor-pointer hover:fill-cyan-700"
+              @click="$emit('close')"
+            />
+          </header>
 
-        <div class="w-10/12 md:w-3/4 lg:w-1/2 bg-white my-8 rounded-lg">
-          <div class="flex flex-col py-4">
-            <header
-              id="modalTitle" 
-              class="flex flex-row justify-between px-4 py-4 border-b-2 text-xl font-semibold"
-            >
-              <div class="w-full text-center">
-                <slot name="header">
-                  {{ title }}
-                </slot>
+          <section
+            id="modalDescription"
+            class="px-4 py-4"
+          >
+            <slot name="body">
+              {{ message }}
+            </slot>
+          </section>
+
+          <footer
+            v-if="slots.footer"
+            class="flex flex-row justify-end border-t-2 px-4 py-2"
+          >
+            <slot name="footer">
+              <div class="flex flex-row justify-end gap-4">
+                <button
+                  type="button"
+                  class="btn-secondary"
+                  @click="$emit('close')"
+                  aria-label="Close modal"
+                >
+                  Cerrar
+                </button>
+                <button
+                  type="button"
+                  class="btn-primary"
+                  @click="$emit('accept')"
+                  aria-label="Accept modal"
+                >
+                  Aceptar
+                </button>
               </div>
-              <Close aria-label="Close modal" class="fill-cyan-600 hover:cursor-pointer hover:fill-cyan-700" @click="$emit('close')"/>
-            </header>
-            
-            <section id="modalDescription" class="px-4 py-4">
-              <slot name="body">
-                {{ message }}
-              </slot>
-            </section>
-
-            <footer v-if="slots.footer" class="flex flex-row justify-end border-t-2 px-4 py-2">
-              <slot name="footer">
-                <div class="flex flex-row justify-end gap-4">
-                  <button type="button" class="btn-secondary" @click="$emit('close')" aria-label="Close modal">Cerrar</button>
-                  <button type="button" class="btn-primary" @click="$emit('accept')" aria-label="Accept modal">Aceptar</button>
-                </div>
-              </slot>
-            </footer>
-          </div>
+            </slot>
+          </footer>
         </div>
       </div>
     </div>
+  </div>
   <!-- </Transition> -->
 </template>
 
@@ -58,22 +80,21 @@ interface Props {
 
 withDefaults(defineProps<Props>(), {
   title: 'Titulo',
-  message: 'Mensaje'
-})
+  message: 'Mensaje',
+});
 
-
-defineEmits(['close', 'accept'])
+defineEmits(['close', 'accept']);
 const slots = useSlots();
 </script>
 
-<style scoped> 
-  .modal-fade-enter,
-  .modal-fade-leave-to {
-    opacity: 0;
-  }
+<style scoped>
+.modal-fade-enter,
+.modal-fade-leave-to {
+  opacity: 0;
+}
 
-  .modal-fade-enter-active,
-  .modal-fade-leave-active {
-    transition: opacity .3s ease-in;
-  }
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.3s ease-in;
+}
 </style>
