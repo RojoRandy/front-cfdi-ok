@@ -92,9 +92,9 @@ const loading = ref(false);
 const onSubmit = handleSubmit(async (values) => {
   loading.value = true;
 
-  const success = await authStore.signIn(values.email, values.password);
+  const response = await authStore.signIn(values.email, values.password);
 
-  if (!success) toast.error(authStore.errorMessage);
+  if (!response.success) toast.error(response.message);
 
   loading.value = false;
 });

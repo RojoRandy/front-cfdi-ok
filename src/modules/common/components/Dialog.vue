@@ -56,7 +56,7 @@
 </template>
 
 <script lang="ts" setup>
-import Close from '@/icons/Close.vue';
+import Close from '@/icons/CloseIcon.vue';
 
 interface Props {
   title?: string;

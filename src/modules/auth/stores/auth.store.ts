@@ -2,26 +2,27 @@ import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
 import { AuthStatus, type SignInResponse, type User } from '../interfaces';
 import { SignInAction } from '../actions';
-import { useStorage } from '@vueuse/core';
 import { RegisterAction } from '../actions/register.action';
 import { checkAuthAction } from '../actions/check-auth.action';
 import type { RegisterRequest } from '../interfaces/register.request';
+import { useLocalStorage } from '@vueuse/core';
+import type { ResponseDto } from '@/modules/common/interfaces/api-schema-response';
 
 export const useAuthStore = defineStore('AuthStore', () => {
   const authStatus = ref<AuthStatus>(AuthStatus.Checking);
   const user = ref<User | undefined>();
-  const token = ref(useStorage('token', ''));
+  const token = ref(useLocalStorage('token', ''));
 
-  const errorMessage = ref('');
-
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (email: string, password: string): Promise<ResponseDto> => {
     try {
       const response = await SignInAction(email, password);
 
       if (!response.success) {
         logout();
-        errorMessage.value = response.message;
-        return false;
+        return {
+          success: false,
+          message: response.message
+        };
       }
 
       const signInResponse: SignInResponse = response.data;
@@ -32,8 +33,10 @@ export const useAuthStore = defineStore('AuthStore', () => {
       return response;
     } catch (error) {
       logout();
-      errorMessage.value = 'No se pudo realizar la petición, por favor intente de nuevo';
-      return false;
+      return {
+        success: false,
+        message: 'No se pudo realizar la petición, por favor intente de nuevo'
+      };
     }
   };
 
@@ -44,23 +47,28 @@ export const useAuthStore = defineStore('AuthStore', () => {
     return true;
   };
 
-  const register = async (registerRequest: RegisterRequest) => {
+  const register = async (registerRequest: RegisterRequest): Promise<ResponseDto> => {
     try {
       const response = await RegisterAction(registerRequest);
 
       if (!response.success) {
         logout();
-        errorMessage.value = response.message;
-        return false;
+        return {
+          success: false,
+          message: response.message
+        };
       }
       const registerResponse: SignInResponse = response.data;
       user.value = registerResponse.user;
       token.value = registerResponse.token;
       authStatus.value = AuthStatus.Authenticated;
-      return true;
+      return response;
     } catch (error) {
       logout();
-      return false;
+      return {
+        success: false,
+        message: 'No se pudo realizar la petición, por favor intente de nuevo'
+      };
     }
   };
 
@@ -84,15 +92,10 @@ export const useAuthStore = defineStore('AuthStore', () => {
     }
   }
 
-  const setErrorMessage = (message: string) => {
-    errorMessage.value = message;
-  }
-
   return {
     user,
     token,
     authStatus,
-    errorMessage,
 
     //Getter
     isChecking: computed(() => authStatus.value === AuthStatus.Checking),
@@ -106,7 +109,6 @@ export const useAuthStore = defineStore('AuthStore', () => {
     signIn,
     logout,
     register,
-    checkAuthStatus,
-    setErrorMessage
+    checkAuthStatus
   };
 });

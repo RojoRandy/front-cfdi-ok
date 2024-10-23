@@ -1,7 +1,7 @@
 <template>
   <!-- <Transition name="modal-fade"> -->
   <div
-    class="fixed inset-0 flex justify-center items-center bg-cyan-950 bg-opacity-80 z-20"
+    class="fixed inset-0 flex justify-center items-center bg-slate-600 bg-opacity-80 z-20"
     role="dialog"
     aria-labelledby="modalTitle"
     aria-describedby="modalDescription"
@@ -9,7 +9,7 @@
 
   <div class="fixed inset-0 z-20 overflow-y-auto">
     <div class="flex justify-center">
-      <div class="w-10/12 md:w-3/4 lg:w-1/2 bg-white my-8 rounded-lg">
+      <div class="w-10/12 max-w-[500px] md:w-[500px] bg-white my-8 rounded-lg">
         <div class="flex flex-col">
           <header
             id="modalTitle"
@@ -71,7 +71,7 @@
 <script lang="ts" setup>
 import { useSlots } from 'vue';
 
-import Close from '@/icons/Close.vue';
+import Close from '@/icons/CloseIcon.vue';
 
 interface Props {
   title?: string;

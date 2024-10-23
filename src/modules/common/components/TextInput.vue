@@ -46,8 +46,8 @@
 </template>
 
 <script setup lang="ts">
-import CloseEye from '@/icons/CloseEye.vue';
-import OpenEye from '@/icons/OpenEye.vue';
+import CloseEye from '@/icons/CloseEyeIcon.vue';
+import OpenEye from '@/icons/OpenEyeIcon.vue';
 import { useField } from 'vee-validate';
 import { computed, ref, type InputTypeHTMLAttribute } from 'vue';
 

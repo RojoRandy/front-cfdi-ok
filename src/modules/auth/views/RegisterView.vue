@@ -5,7 +5,7 @@
     @close="$emit('cancel')"
   >
     <template v-slot:body>
-      <div class="flex flex-col px-20">
+      <div class="flex flex-col px-4">
         <p class="self-center mb-5">Estas a unos pasos de poder generar tu primera factura</p>
 
         <form @submit="onSubmit">
@@ -47,11 +47,11 @@
           />
 
           <div
-            v-if="authStore.errorMessage"
+            v-if="response?.success"
             class="flex flex-row gap-4 items-center bg-red-400 text-white font-semibold text-center px-4 py-2 rounded-md mt-2"
           >
             <ErrorOutline class="fill-white" />
-            <span>{{ authStore.errorMessage }}</span>
+            <span>{{ response?.message }}</span>
           </div>
 
           <div class="flex flex-col w-full gap-4 mt-4">
@@ -85,7 +85,8 @@ import * as zod from 'zod';
 import Modal from '@/modules/common/components/Modal.vue';
 import TextInput from '@/modules/common/components/TextInput.vue';
 import { useAuthStore } from '../stores/auth.store';
-import ErrorOutline from '@/icons/ErrorOutline.vue';
+import ErrorOutline from '@/icons/ErrorOutlineIcon.vue';
+import type { ResponseDto } from '@/modules/common/interfaces/api-schema-response';
 
 interface Props {
   isNewAccount: boolean;
@@ -152,10 +153,11 @@ const classValidator = (validator: boolean) => {
 };
 
 const loading = ref(false);
+const response = ref<ResponseDto | null>(null)
 const onSubmit = handleSubmit(async (values) => {
   loading.value = true;
   const { email, password, passwordConfirm } = values;
-  await authStore.register({
+  const response = await authStore.register({
     email,
     password,
     passwordConfirm,
@@ -167,7 +169,6 @@ const onSubmit = handleSubmit(async (values) => {
 const onCancel = () => {
   handleReset();
   password.value = '';
-  authStore.setErrorMessage('');
   emit('cancel');
 };
 </script>
