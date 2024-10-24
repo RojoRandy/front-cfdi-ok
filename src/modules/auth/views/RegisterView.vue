@@ -1,76 +1,106 @@
 <template>
   <Modal
     v-if="isNewAccount"
-    title="Crear nueva cuenta"
+    :title="!registerCompleted ? 'Crear nueva cuenta' : 'Registro Completado'"
     @close="$emit('cancel')"
   >
     <template v-slot:body>
-      <div class="flex flex-col px-4">
-        <p class="self-center mb-5">Estas a unos pasos de poder generar tu primera factura</p>
+      <template
+        v-if="!registerCompleted"
+      >
+        <div 
+          v-if="loading"
+          class="w-full flex flex-col items-center justify-center h-[200px] "
+        >
+          <Loading />
+        </div>
+        <template
+          v-else
+          class="flex flex-col px-2 md:px-4"
+        >
+          <p class="self-center mb-5">Estas a unos pasos de poder generar tu primera factura</p>
+          <form @submit="onSubmit">
+            <TextInput
+              id="email"
+              name="email"
+              type="email"
+              label="Correo Electrónico"
+              placeholder="ejemplo@correo.com"
+            />
 
-        <form @submit="onSubmit">
-          <TextInput
-            id="email"
-            name="email"
-            type="email"
-            label="Correo Electrónico"
-            placeholder="ejemplo@correo.com"
-          />
+            <TextInput
+              id="password"
+              name="password"
+              type="password"
+              label="Contraseña"
+              placeholder="Ingresar contraseña"
+              v-model="password"
+              :show-errors="false"
+            />
 
-          <TextInput
-            id="password"
-            name="password"
-            type="password"
-            label="Contraseña"
-            placeholder="Ingresar contraseña"
-            v-model="password"
-            :show-errors="false"
-          />
+            <div class="flex flex-col gap-2 my-4 px-2">
+              <p class="font-semibold text-sm">Reglas de seguridad de contraseña</p>
+              <ul class="list-disc px-8 text-sm">
+                <li :class="classValidator(password.length >= 8)">Mínimo 8 carácteres</li>
+                <li :class="classValidator(hasUppercase)">Una mayúscula</li>
+                <li :class="classValidator(hasLowercase)">Una minúscula</li>
+                <li :class="classValidator(hasNumber)">Un número (0-9)</li>
+                <li :class="classValidator(hasSpecialChar)">Un carácter especial (# _ @ $)</li>
+              </ul>
+            </div>
 
-          <div class="flex flex-col gap-2 my-4 px-2">
-            <p class="font-semibold text-sm">Reglas de seguridad de contraseña</p>
-            <ul class="list-disc px-8 text-sm">
-              <li :class="classValidator(password.length >= 8)">Mínimo 8 carácteres</li>
-              <li :class="classValidator(hasUppercase)">Una mayúscula</li>
-              <li :class="classValidator(hasLowercase)">Una minúscula</li>
-              <li :class="classValidator(hasNumber)">Un número (0-9)</li>
-              <li :class="classValidator(hasSpecialChar)">Un carácter especial (# _ @ $)</li>
-            </ul>
-          </div>
+            <TextInput
+              id="passwordConfirm"
+              name="passwordConfirm"
+              type="password"
+              label="Confirmar Contraseña"
+              placeholder="Confirmar contraseña"
+            />
 
-          <TextInput
-            id="passwordConfirm"
-            name="passwordConfirm"
-            type="password"
-            label="Confirmar Contraseña"
-            placeholder="Confirmar contraseña"
-          />
-
-          <div
-            v-if="response?.success"
-            class="flex flex-row gap-4 items-center bg-red-400 text-white font-semibold text-center px-4 py-2 rounded-md mt-2"
-          >
-            <ErrorOutline class="fill-white" />
-            <span>{{ response?.message }}</span>
-          </div>
-
-          <div class="flex flex-col w-full gap-4 mt-4">
-            <button
-              type="submit"
-              class="btn-primary"
+            <div
+              v-if="response?.success"
+              class="flex flex-row gap-4 items-center bg-red-400 text-white font-semibold text-center px-4 py-2 rounded-md mt-2"
             >
-              Crear cuenta
-            </button>
+              <ErrorOutline class="fill-white" />
+              <span>{{ response?.message }}</span>
+            </div>
 
-            <button
-              type="reset"
-              class="btn-secondary"
-              @click="onCancel"
-            >
-              Cancelar
-            </button>
-          </div>
-        </form>
+            <div class="flex flex-col w-full gap-4 mt-4">
+              <button
+                type="submit"
+                class="btn-primary"
+                :disabled="loading"
+              >
+                Crear cuenta
+              </button>
+
+              <button
+                type="reset"
+                class="btn-secondary"
+                @click="onCancel"
+                :disabled="loading"
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </template>
+
+      </template>
+      <div
+        v-else
+        class="flex flex-col px-2 md:px-4 text-center font-semibold text-md space-y-4"
+      >
+        <p>Gracias por completar tu registro.</p>
+        <p>En breve recibirás un correo para confirmar sus datos de registro.</p>
+        <p>Ya puedes acceder a la plataforma para empezar a conocerla</p>
+        <button
+          class="btn-primary"
+          type="button"
+          @click="enterToWebsite"
+        >
+          Ingresar al sitio
+        </button>
       </div>
     </template>
   </Modal>
@@ -87,6 +117,7 @@ import TextInput from '@/modules/common/components/TextInput.vue';
 import { useAuthStore } from '../stores/auth.store';
 import ErrorOutline from '@/icons/ErrorOutlineIcon.vue';
 import type { ResponseDto } from '@/modules/common/interfaces/api-schema-response';
+import Loading from '@/modules/common/components/Loading.vue';
 
 interface Props {
   isNewAccount: boolean;
@@ -153,18 +184,29 @@ const classValidator = (validator: boolean) => {
 };
 
 const loading = ref(false);
-const response = ref<ResponseDto | null>(null)
+const response = ref<ResponseDto | null>(null);
+
+const registerCompleted = ref(false);
+
 const onSubmit = handleSubmit(async (values) => {
   loading.value = true;
   const { email, password, passwordConfirm } = values;
-  const response = await authStore.register({
+  response.value = await authStore.register({
     email,
     password,
     passwordConfirm,
   });
 
+  if (response.value.success) {
+    registerCompleted.value = true;
+  }
+
   loading.value = false;
 });
+
+const enterToWebsite = () => {
+  authStore.postRegister();
+}
 
 const onCancel = () => {
   handleReset();

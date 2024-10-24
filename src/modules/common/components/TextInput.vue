@@ -18,10 +18,8 @@
           @input="handleChange"
           @blur="handleBlur"
         />
-        <button
+        <div
           v-if="type === 'password'"
-          type="button"
-          data-hs-toggle-password='{"target": "#hs-toggle-password"}'
           class="absolute inset-y-0 end-0 flex items-center z-20 px-3 cursor-pointer text-gray-400 rounded-e-md focus:outline-none focus:text-blue-600 dark:text-neutral-600 dark:focus:text-blue-500"
           @click="togglePassword"
         >
@@ -33,7 +31,7 @@
             v-if="inputType === 'text'"
             class="fill-cyan-600"
           />
-        </button>
+        </div>
       </div>
       <span
         v-if="showErrors"

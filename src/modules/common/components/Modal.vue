@@ -8,8 +8,8 @@
   ></div>
 
   <div class="fixed inset-0 z-20 overflow-y-auto">
-    <div class="flex justify-center">
-      <div class="w-10/12 max-w-[500px] md:w-[500px] bg-white my-8 rounded-lg">
+    <div class="flex h-screen justify-items-center items-center justify-center">
+      <div class="w-10/12 max-w-[500px] md:w-[500px] h-fit bg-white my-8 rounded-lg">
         <div class="flex flex-col">
           <header
             id="modalTitle"

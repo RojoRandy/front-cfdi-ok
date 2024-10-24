@@ -61,7 +61,6 @@ export const useAuthStore = defineStore('AuthStore', () => {
       const registerResponse: SignInResponse = response.data;
       user.value = registerResponse.user;
       token.value = registerResponse.token;
-      authStatus.value = AuthStatus.Authenticated;
       return response;
     } catch (error) {
       logout();
@@ -71,6 +70,10 @@ export const useAuthStore = defineStore('AuthStore', () => {
       };
     }
   };
+
+  const postRegister = () => {
+    authStatus.value = AuthStatus.Checking;
+  }
 
   const checkAuthStatus = async (): Promise<boolean> => {
     try {
@@ -109,6 +112,7 @@ export const useAuthStore = defineStore('AuthStore', () => {
     signIn,
     logout,
     register,
-    checkAuthStatus
+    checkAuthStatus,
+    postRegister
   };
 });

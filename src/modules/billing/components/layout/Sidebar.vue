@@ -22,22 +22,21 @@
         v-for="item in menuItems" 
         :icon="item.icon"
         :text="item.text"
-        :route-name="item.routeName"  
+        :route-name="item.routeName"
       />
     </div>
   </aside>
 </template>
 
 <script setup lang="ts">
-import ArrowLeft from '@/icons/ArrowLeft.vue';
 import SidebarMenuItem from './SidebarMenuItem.vue';
 import { computed } from 'vue';
-import type { SidebarItemProps } from '../interfaces/sidebar.interface';
-import MenuDashboard from '@/icons/DashboardIcon.vue';
-import MenuBilling from '@/icons/BillingIcon.vue';
-import MenuPayments from '@/icons/PaymentsIcon.vue';
-import MenuClients from '@/icons/ClientsIcon.vue';
-import MenuProducts from '@/icons/ProductsIcon.vue';
+import type { SidebarItemProps } from '../../interfaces/sidebar.interface';
+import DashboardIcon from '@/icons/DashboardIcon.vue';
+import BillingIcon from '@/icons/BillingIcon.vue';
+import PaymentsIcon from '@/icons/PaymentsIcon.vue';
+import ClientsIcon from '@/icons/ClientsIcon.vue';
+import ProductsIcon from '@/icons/ProductsIcon.vue';
 
 interface Props {
   visible: boolean;
@@ -52,27 +51,27 @@ const emits = defineEmits(['close']);
 const menuItems = computed<SidebarItemProps[]>(()=> {
   return [
     {
-      icon: MenuDashboard,
+      icon: DashboardIcon,
       text: 'Dashboard',
       routeName: 'dashboard'
     },
     {
-      icon: MenuBilling,
+      icon: BillingIcon,
       text: 'Facturar',
       routeName: 'billing'
     },
     {
-      icon: MenuPayments,
+      icon: PaymentsIcon,
       text: 'Pagos',
       routeName: 'payments'
     },
     {
-      icon: MenuClients,
+      icon: ClientsIcon,
       text: 'Clientes',
       routeName: 'clients'
     },
     {
-      icon: MenuProducts,
+      icon: ProductsIcon,
       text: 'Productos',
       routeName: 'products'
     },

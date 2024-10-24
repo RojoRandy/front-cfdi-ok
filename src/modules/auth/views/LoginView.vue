@@ -50,7 +50,7 @@
       Crear cuenta
     </button>
   </div>
-
+  
   <RegisterView
     :is-new-account="isNewAccount"
     @cancel="isNewAccount = false"
