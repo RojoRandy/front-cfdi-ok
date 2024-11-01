@@ -7,10 +7,10 @@
     aria-describedby="modalDescription"
   ></div>
 
-  <div class="fixed inset-0 z-20 overflow-y-auto">
+  <div class="fixed inset-0 z-20">
     <div class="flex h-screen justify-items-center items-center justify-center">
-      <div class="w-10/12 max-w-[500px] md:w-[500px] h-fit bg-white my-8 rounded-lg">
-        <div class="flex flex-col">
+      <div class="w-10/12 max-w-[500px] md:w-[500px] bg-white rounded-lg">
+        <div class="flex flex-col max-h-[calc(80vh)] md:max-h-[calc(90vh)]">
           <header
             id="modalTitle"
             class="flex flex-row justify-between px-4 py-4 border-b-2 text-xl font-semibold"
@@ -29,7 +29,7 @@
 
           <section
             id="modalDescription"
-            class="px-4 py-4"
+            class="h-[10%] overflow-auto px-4 py-2"
           >
             <slot name="body">
               {{ message }}

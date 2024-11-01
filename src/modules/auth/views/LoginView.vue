@@ -13,6 +13,7 @@
         type="email"
         label="Correo Electrónico"
         placeholder="ejemplo@correo.com"
+        autofocus
       />
 
       <TextInput

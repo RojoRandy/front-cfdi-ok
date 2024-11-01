@@ -2,6 +2,7 @@ import { type SignInResponse } from '../interfaces/auth.response';
 import { isAxiosError } from 'axios';
 import type { SchemaResponse } from '@/modules/common/interfaces/api-schema-response';
 import { cfdiOkApi } from '@/api/cfdiOkApi';
+import { generalException } from '@/modules/common/error/general.exception';
 
 export const SignInAction = async (
   email: string,
@@ -17,17 +18,6 @@ export const SignInAction = async (
 
     return response;
   } catch (error) {
-    if (isAxiosError(error)) {
-      console.log(error);
-      return {
-        message: error.response?.data.description,
-        success: false,
-        data: undefined,
-      };
-    } else {
-      throw new Error(
-        'No se pudo realizar la petición, por favor intente de nuevo',
-      );
-    }
+    return generalException(error);
   }
 };

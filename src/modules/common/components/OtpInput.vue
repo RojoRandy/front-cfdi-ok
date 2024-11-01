@@ -1,15 +1,28 @@
 <template>
-  <div ref="otpCont">
-    <input
-      type="text"
-      class="digit-box"
-      v-for="(el, index) in digits"
-      :key="el + index"
-      v-model="digits[index]"
-      :autofocus="index === 0"
-      :placeholder="index + 1 + ''"
-      :maxlength="1"
-    />
+  <div class="flex flex-col gap-2">
+    <label
+      :for="name"
+      class="text-cyan-950 font-semibold text-sm"
+      >
+      {{ label }}
+      <span v-if="required" class="text-red-400 font-semibold text-sm">*</span>
+      </label
+      
+    >
+    <div ref="otpCont" class="flex flex-row gap-2 text-center">
+      <input
+        type="text"
+        class="block text-center w-full text-sm border-2 border-gray-300 px-4 py-2 rounded-md text-cyan-900 placeholder:italic hover:border-cyan-500 focus:outline-none focus:ring-0"
+        :class="{bounce: digits[index] !== null}"
+        v-for="(el, index) in digits"
+        :key="el + index"
+        v-model="digits[index]"
+        :autofocus="index === 0"
+        :placeholder="index + 1 + ''"
+        :maxlength="1"
+        @keydown="handleKeyDown($event, index)"
+      />
+    </div>
   </div>
 </template>
 
@@ -17,11 +30,20 @@
 import { ref, reactive } from 'vue';
 
 interface Props {
-  default: string;
+  id: string;
+  name: string;
+  label: string;
   digitCount: number;
+  default?: string;
+  required?: boolean
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  default: '',
+  required: false
+});
+
+const emit = defineEmits(['update:otp']);
 
 const digits = reactive<string[]>([]);
 
@@ -35,7 +57,50 @@ if (props.default && props.default.length === props.digitCount) {
   }
 }
 
-const otpCont = ref(null);
+const otpCont = ref<HTMLDivElement>();
+
+const handleKeyDown = function (event: any, index: number) {
+  if (event.key !== "Tab" && 
+      event.key !== "ArrowRight" &&
+      event.key !== "ArrowLeft"
+  ) {
+    event.preventDefault();
+  }
+
+  if (event.key === "Backspace") {
+    digits[index] = '';
+
+    if (index != 0) {
+      //@ts-ignore
+      (otpCont.value!.children)[index-1].focus();
+    } 
+
+    return;
+  }
+
+  if ((new RegExp('^([0-9])$')).test(event.key)) {
+    digits[index] = event.key;
+
+    if (index != props.digitCount - 1) {
+      //@ts-ignore
+      (otpCont.value!.children)[index+1].focus();
+    }
+  }
+
+  if (isDigitsFull()) {
+    emit('update:otp', digits.join(''))
+  }
+}
+
+const isDigitsFull = function () {
+  for (const elem of digits) {
+    if (elem == null || elem == undefined) {
+      return false;
+    }
+  }
+
+  return true;
+}
 </script>
 
 <style scoped>
@@ -52,5 +117,19 @@ const otpCont = ref(null);
 
 .digit-box:focus {
   outline: 3px solid black;
+}
+
+.bounce {
+  animation: pulse .3s ease-in-out alternate;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  100% {
+    transform: scale(1.1);
+  }
 }
 </style>

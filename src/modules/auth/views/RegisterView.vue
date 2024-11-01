@@ -2,7 +2,7 @@
   <Modal
     v-if="isNewAccount"
     :title="!registerCompleted ? 'Crear nueva cuenta' : 'Registro Completado'"
-    @close="$emit('cancel')"
+    @close="onCancel"
   >
     <template v-slot:body>
       <template
@@ -10,20 +10,29 @@
       >
         <div 
           v-if="loading"
-          class="w-full flex flex-col items-center justify-center h-[200px] "
+          class="w-full flex flex-col items-center justify-center h-[200px]"
         >
           <Loading />
         </div>
-        <template
+        <div
           v-else
           class="flex flex-col px-2 md:px-4"
         >
-          <p class="self-center mb-5">Estas a unos pasos de poder generar tu primera factura</p>
-          <form @submit="onSubmit">
+          <p class="self-center mb-2 text-center text-sm">Estas a unos pasos de emitir tu primera factura</p>
+          <form @submit="onSubmit" id="registerForm">
+            <TextInput
+              id="fullName"
+              name="fullName"
+              type="text"
+              label="Nombre completo"
+              placeholder="Ingresa tu nombre"
+              autofocus
+            />
+
             <TextInput
               id="email"
               name="email"
-              type="email"
+              type="text"
               label="Correo Electrónico"
               placeholder="ejemplo@correo.com"
             />
@@ -34,14 +43,13 @@
               type="password"
               label="Contraseña"
               placeholder="Ingresar contraseña"
-              v-model="password"
               :show-errors="false"
             />
 
             <div class="flex flex-col gap-2 my-4 px-2">
-              <p class="font-semibold text-sm">Reglas de seguridad de contraseña</p>
-              <ul class="list-disc px-8 text-sm">
-                <li :class="classValidator(password.length >= 8)">Mínimo 8 carácteres</li>
+              <p class="font-semibold text-xs">Reglas de seguridad de contraseña</p>
+              <ul class="list-disc px-8 text-xs">
+                <li :class="classValidator(values.password!.length >= 8)">Mínimo 8 carácteres</li>
                 <li :class="classValidator(hasUppercase)">Una mayúscula</li>
                 <li :class="classValidator(hasLowercase)">Una minúscula</li>
                 <li :class="classValidator(hasNumber)">Un número (0-9)</li>
@@ -58,33 +66,15 @@
             />
 
             <div
-              v-if="response?.success"
+              v-if="response?.success === false"
               class="flex flex-row gap-4 items-center bg-red-400 text-white font-semibold text-center px-4 py-2 rounded-md mt-2"
             >
               <ErrorOutline class="fill-white" />
-              <span>{{ response?.message }}</span>
-            </div>
-
-            <div class="flex flex-col w-full gap-4 mt-4">
-              <button
-                type="submit"
-                class="btn-primary"
-                :disabled="loading"
-              >
-                Crear cuenta
-              </button>
-
-              <button
-                type="reset"
-                class="btn-secondary"
-                @click="onCancel"
-                :disabled="loading"
-              >
-                Cancelar
-              </button>
+              <span>{{ response?.message ?? 'Ocurrio un error inesperado, por favor vuelva a intentar' }}</span>
             </div>
           </form>
-        </template>
+
+        </div>
 
       </template>
       <div
@@ -101,6 +91,28 @@
         >
           Ingresar al sitio
         </button>
+      </div>
+    </template>
+    <template v-if="!registerCompleted && !loading" v-slot:footer>
+      <div class="flex flex-row justify-end w-full gap-4">
+        <button
+          form="registerForm"
+          type="reset"
+          class="btn-secondary flex-1"
+          @click="onCancel"
+          :disabled="loading"
+        >
+          Cancelar
+        </button>
+        <button
+          form="registerForm"
+          type="submit"
+          class="btn-primary flex-1"
+          :disabled="loading"
+        >
+          Crear cuenta
+        </button>
+
       </div>
     </template>
   </Modal>
@@ -128,15 +140,14 @@ const emit = defineEmits(['cancel']);
 
 const authStore = useAuthStore();
 
-const password = ref('');
 const hasUppercase = computed(() => validatePasswordContains(/[A-Z]/));
 const hasLowercase = computed(() => validatePasswordContains(/[a-z]/));
 const hasNumber = computed(() => validatePasswordContains(/[0-9]/));
 const hasSpecialChar = computed(() => validatePasswordContains(/[@#$_]/));
 
 const validatePasswordContains = (regex: RegExp) => {
-  for (let i = 0; i < password.value.length; i++) {
-    let ch = password.value.charAt(i);
+  for (let i = 0; i < values.password!.length; i++) {
+    let ch = values.password!.charAt(i);
 
     if (regex.test(ch)) return true;
   }
@@ -146,6 +157,9 @@ const validatePasswordContains = (regex: RegExp) => {
 const validationSchema = toTypedSchema(
   zod
     .object({
+      fullName: zod
+        .string({ message: 'Debes ingresar tu nombre'})
+        .min(1, { message: 'Debes ingresar tu nombre'}),
       email: zod
         .string({ message: 'Correo por ingresar' })
         .email({ message: 'Debe ser un correo válido' }),
@@ -167,13 +181,15 @@ const validationSchema = toTypedSchema(
     }),
 );
 
-const { handleSubmit, handleReset } = useForm({
+const { handleSubmit, handleReset, values } = useForm({
   validationSchema,
   initialValues: {
+    fullName: '',
     email: '',
     password: '',
     passwordConfirm: '',
   },
+  keepValuesOnUnmount: true
 });
 
 const classValidator = (validator: boolean) => {
@@ -190,13 +206,14 @@ const registerCompleted = ref(false);
 
 const onSubmit = handleSubmit(async (values) => {
   loading.value = true;
-  const { email, password, passwordConfirm } = values;
+  const { fullName, email, password, passwordConfirm } = values;
   response.value = await authStore.register({
+    fullName,
     email,
     password,
     passwordConfirm,
   });
-
+  console.log(response.value)
   if (response.value.success) {
     registerCompleted.value = true;
   }
@@ -210,7 +227,10 @@ const enterToWebsite = () => {
 
 const onCancel = () => {
   handleReset();
-  password.value = '';
+  registerCompleted.value = false;
+  loading.value = false;
+  response.value = null;
   emit('cancel');
 };
+
 </script>

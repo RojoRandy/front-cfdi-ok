@@ -1,22 +1,30 @@
 <template>
   <div class="flex flex-col gap-2">
     <label
-      for="lbl_correo"
-      class="text-cyan-950 font-semibold"
-      >{{ label }}</label
+      :for="name"
+      class="text-cyan-950 font-semibold text-sm"
+      >
+      {{ label }}
+      <span v-if="required" class="text-red-400 font-semibold text-sm">*</span>
+      </label
+      
     >
     <div class="flex flex-col">
       <div class="relative">
         <input
+          :ref="ref"
           :id="id"
           :name="name"
           :type="inputType"
           v-model="value"
-          class="block w-full border-2 border-gray-300 px-4 py-2 rounded-md text-cyan-900 placeholder:italic hover:border-cyan-500 focus:outline-none focus:ring-0"
-          :class="inputTextClasses"
-          :placeholder="placeholder"
           @input="handleChange"
           @blur="handleBlur"
+          class="block w-full text-sm border-2 border-gray-300 px-4 py-2 rounded-md text-cyan-900 placeholder:italic hover:border-cyan-500 focus:outline-none focus:ring-0"
+          :class="inputTextClasses"
+          :placeholder="placeholder"
+          :minlength="minLength"
+          :maxlength="maxLength"
+          :autofocus="autofocus"
         />
         <div
           v-if="type === 'password'"
@@ -53,16 +61,24 @@ interface Props {
   id: string;
   name: string;
   label: string;
+  autofocus?: boolean;
   modelValue?: string;
   type?: InputTypeHTMLAttribute | undefined;
   placeholder?: string;
   showErrors?: boolean;
+  required?: boolean;
+  minLength?: number;
+  maxLength?: unknown;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   type: 'text',
   placeholder: 'Ingrese un texto',
   showErrors: true,
+  autofocus: false,
+  required: false,
+  minLength: 0,
+  maxLength: undefined
 });
 
 const inputType = ref<InputTypeHTMLAttribute | undefined>(props.type || 'text');

@@ -7,6 +7,7 @@ import { checkAuthAction } from '../actions/check-auth.action';
 import type { RegisterRequest } from '../interfaces/register.request';
 import { useLocalStorage } from '@vueuse/core';
 import type { ResponseDto } from '@/modules/common/interfaces/api-schema-response';
+import { lackConnectionErrorResponse } from '@/modules/common/error/general.exception';
 
 export const useAuthStore = defineStore('AuthStore', () => {
   const authStatus = ref<AuthStatus>(AuthStatus.Checking);
@@ -33,10 +34,7 @@ export const useAuthStore = defineStore('AuthStore', () => {
       return response;
     } catch (error) {
       logout();
-      return {
-        success: false,
-        message: 'No se pudo realizar la petición, por favor intente de nuevo'
-      };
+      return lackConnectionErrorResponse;
     }
   };
 
@@ -64,10 +62,7 @@ export const useAuthStore = defineStore('AuthStore', () => {
       return response;
     } catch (error) {
       logout();
-      return {
-        success: false,
-        message: 'No se pudo realizar la petición, por favor intente de nuevo'
-      };
+      return lackConnectionErrorResponse;
     }
   };
 
@@ -105,8 +100,10 @@ export const useAuthStore = defineStore('AuthStore', () => {
     isAuthenticated: computed(() => authStatus.value === AuthStatus.Authenticated),
     isUnauthenticated: computed(() => authStatus.value === AuthStatus.Unauthenticated),
     isAdmin: computed(()=> user.value?.role === 'admin'),
-    //TODO: getter para saber si es Admin o no
-    //username: computed(() => user.value?.fullName),
+
+    emisorId: computed(()=> user.value?.emisorId || 0),
+    isEmisor: computed(()=> user.value?.role === 'emisor'),
+    fullName: computed(() => user.value?.fullName),
 
     //Actions
     signIn,

@@ -6,14 +6,14 @@
       :sections="sections"
     >
     <template #body="bodyProps">
-      <FiscalData v-if="bodyProps.activeSection!.name === 'FiscalData'" />
+      <FiscalData 
+        v-if="bodyProps.activeSection!.name === 'FiscalData'" 
+        />
       <FiscalAddress v-if="bodyProps.activeSection!.name === 'FiscalAddress'"/>
       <AccountInfo v-if="bodyProps.activeSection!.name === 'AccountInfo'"/>
       <SendMails v-if="bodyProps.activeSection!.name === 'SendMails'"/>
       <DigitalStamp v-if="bodyProps.activeSection!.name === 'DigitalStamp'"/>
-    </template>
-    <template #footer>
-      footer
+
     </template>
     </TabSections>
   </div>
@@ -27,7 +27,6 @@ import FiscalAddress from '../components/user-profile/FiscalAddress.vue';
 import AccountInfo from '../components/user-profile/AccountInfo.vue';
 import SendMails from '../components/user-profile/SendMails.vue';
 import DigitalStamp from '../components/user-profile/DigitalStamp.vue';
-// import { reactive } from 'vue';
 
 const sections = [
     {
@@ -56,5 +55,4 @@ const sections = [
       isActive: false,
     },
   ];
-
 </script>

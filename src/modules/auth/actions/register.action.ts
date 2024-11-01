@@ -3,6 +3,7 @@ import { cfdiOkApi } from '@/api/cfdiOkApi';
 import type { SchemaResponse } from '@/modules/common/interfaces/api-schema-response';
 import { isAxiosError } from 'axios';
 import type { RegisterRequest } from '../interfaces/register.request';
+import { generalException } from '@/modules/common/error/general.exception';
 
 export const RegisterAction = async (
   registerRequest: RegisterRequest
@@ -12,17 +13,6 @@ export const RegisterAction = async (
 
     return data
   } catch (error) {
-    if (isAxiosError(error)) {
-      console.log(error);
-      return {
-        message: error.response?.data.description,
-        success: false,
-        data: undefined,
-      };
-    } else {
-      throw new Error(
-        'No se pudo realizar la petición, por favor intente de nuevo',
-      );
-    }
+    return generalException(error);
   }
 };

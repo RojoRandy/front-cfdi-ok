@@ -4,6 +4,7 @@ import type { RouteRecordRaw } from 'vue-router';
 export const billingRoutes: RouteRecordRaw = {
   path: '/',
   name: 'billing-layout',
+  redirect: {name: 'dashboard'},
   component: () => import('@/modules/billing/layouts/BillingLayout.vue'),
   children: [
     {

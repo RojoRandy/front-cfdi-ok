@@ -6,7 +6,7 @@
       @click="onToggleClick"
       class="flex flex-row items-center justify-between bg-slate-800 rounded-full h-full w-52 transition-all duration-200 hover:bg-cyan-600 hover:cursor-pointer"
     >
-      <span id="userProfileName" class="text-white flex-1 text-center select-none">Randy Rojo</span>
+      <span id="userProfileName" class="text-white flex-1 text-center select-none">{{ authStore.fullName }}</span>
       <ProfileIcon id="userProfileIcon" class="fill-white w-9 h-9 mr-1" />
     </div>
     <div
@@ -29,6 +29,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import router from '@/router';
 import { autoUpdate, hide, offset, useFloating } from '@floating-ui/vue';
 import { onClickOutside } from '@vueuse/core';
 
@@ -36,7 +37,6 @@ import ProfileIcon from '@/icons/ProfileIcon.vue';
 import LogoutIcon from '@/icons/LogoutIcon.vue';
 
 import {useAuthStore} from '@/modules/auth/stores/auth.store';
-import router from '@/router';
 
 const userProfile = ref(null);
 const floatingElement = ref(null);

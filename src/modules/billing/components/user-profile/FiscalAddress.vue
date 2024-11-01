@@ -1,9 +1,9 @@
 <template>
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 my-4">
+    <TextInput id="codigoPostal" name="codigoPostal" label="Código Postal" required />
     <TextInput id="calle" name="calle" label="Calle"  />
     <TextInput id="numExt" name="numExt" label="Número Exterior"  />
     <TextInput id="numInt" name="numInt" label="Número Interior"  />
-    <TextInput id="codigoPostal" name="codigoPostal" label="Régimen Fiscal"  />
     <TextInput id="colonia" name="colonia" label="Colonia"  />
     <TextInput id="pais" name="pais" label="País"  />
     <TextInput id="estado" name="estado" label="Estado"  />
