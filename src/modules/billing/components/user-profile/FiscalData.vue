@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="loading"
+    v-if="isLoading"
     class="w-full flex flex-col items-center justify-center h-[200px]"
   >
     <Loading />
@@ -45,7 +45,7 @@
         form="fiscalDataForm"
         type="submit"
         class="btn-primary"
-        :disabled="loading"
+        :disabled="isLoading"
       >
         Guardar
       </button>
@@ -54,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import * as zod from 'zod';
 import { toTypedSchema } from '@vee-validate/zod';
 import { useForm } from 'vee-validate';
@@ -63,13 +63,13 @@ import type { MaskInputOptions } from 'maska';
 
 import SelectInput from '@/modules/common/components/SelectInput.vue';
 import TextInput from '@/modules/common/components/TextInput.vue';
-import Loading from '@/modules/common/components/Loading.vue';
 
 import { rfcPFRegex, rfcPMRegex } from '@/modules/common/utils/regex';
 import { useRegimenFiscalStore } from '@/modules/catalog/regimen-fiscal/stores/regimen-fiscal.store';
 import { useUserProfileStore } from '../../stores/user-profile.store';
+import Loading from '@/modules/common/components/Loading.vue';
 
-const loading = ref(false);
+const isLoading = ref(false);
 
 const options = ref<MaskInputOptions>({
   mask: 'AAAM-######-XXX',
@@ -118,26 +118,20 @@ const { handleSubmit, resetForm } = useForm({
 });
 
 const onSubmit = handleSubmit(async (values) => {
-  loading.value = true;
+  isLoading.value = true;
   const response = await userProfileStore.saveFiscalData(values)
 
   if(!response.success) console.log(response.message);
-  loading.value = false;
+  isLoading.value = false;
 });
 
 
 onMounted(async ()=> {
-  loading.value = true;
-  await userProfileStore.getUserProfile();
-  await regimenFiscalStore.getAllFiscalRegimes();
-  
   resetForm({values: {
-    nombreFiscal: userProfileStore.persona?.nombreFiscal,
     rfc: userProfileStore.persona?.rfc,
+    nombreFiscal: userProfileStore.persona?.nombreFiscal,
     regimenFiscalId: userProfileStore.persona?.regimenFiscal.id,
   }})
-  loading.value = false;
-
 })
 
 </script>

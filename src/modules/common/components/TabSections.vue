@@ -33,6 +33,7 @@
         <span
           v-for="(section, index) in sections"
           @click="onSectionActive(index)"
+          :key="index + '-' + section.name"
           class="w-full flex flex-row gap-4 rounded-md py-2 px-2 select-none hover:bg-slate-600 transition-all duration-200 active:bg-cyan-600 hover:cursor-pointer"
           :class="{
             'bg-cyan-600': section.isActive,

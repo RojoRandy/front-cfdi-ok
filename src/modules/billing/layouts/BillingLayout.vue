@@ -7,42 +7,31 @@
     @close="toggleSidebar"
   />
 
+  <LoadingView v-if="authStore.isLoading"/>
   <div
+    v-else
     class="transition-all ease-in-out duration-300"
     :class="{
       'w-[calc(100vw - 4rem)] md:ml-16': !showSidebar,
       'w-[calc(100vw - 16rem)] ml-64': showSidebar,
     }"
   >
-    <div
-      v-if="loading"
-      class="w-full flex flex-col items-center justify-center h-[200px]"
-    >
-      <Loading />
-    </div>
-    <template v-else>
-      <RouterView />
-    </template>
+    <RouterView />
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import Sidebar from '../components/layout/Sidebar.vue';
 import TopMenu from '../components/layout/TopMenu.vue';
-import { useUserProfileStore } from '../stores/user-profile.store';
-import Loading from '@/modules/common/components/Loading.vue';
+import LoadingView from '@/modules/common/components/LoadingView.vue';
+// import { useLoadingView } from '@/modules/common/composables/useLoadingView';
+import { useAuthStore } from '@/modules/auth/stores/auth.store';
+
+const authStore = useAuthStore();
 const showSidebar = ref(false);
-
-const userProfileStore = useUserProfileStore();
-
 
 const toggleSidebar = () => {
   showSidebar.value = !showSidebar.value;
 };
-
-const loading = ref(false);
-onMounted(async () => {
-  await userProfileStore.getUserProfile();
-});
 </script>

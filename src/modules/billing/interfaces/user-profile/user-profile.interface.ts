@@ -19,7 +19,9 @@ export interface Persona {
   colonia: string;
   pais: Pais;
   estado: Estado;
+  estadoNombre: string;
   municipio: Municipio;
+  municipioNombre: string;
   localidad: string;
   referencias: string;
 }

@@ -12,19 +12,19 @@
     <div class="flex flex-col">
       <div class="relative">
         <input
-          :ref="ref"
           :id="id"
           :name="name"
           :type="inputType"
           v-model="value"
-          @input="handleChange"
-          @blur="handleBlur"
-          class="block w-full text-sm border-2 border-gray-300 px-4 py-2 rounded-md text-cyan-900 placeholder:italic hover:border-cyan-500 focus:outline-none focus:ring-0"
+          @input="handleInput"
+          @blur="onBlur"
+          class="block w-full text-sm border-2 border-gray-300 px-4 py-2 rounded-md text-cyan-900 placeholder:italic hover:border-cyan-500 focus:outline-none focus:ring-0 focus:border-cyan-500"
           :class="inputTextClasses"
           :placeholder="placeholder"
           :minlength="minLength"
           :maxlength="maxLength"
           :autofocus="autofocus"
+          :disabled="disabled"
         />
         <div
           v-if="type === 'password'"
@@ -69,6 +69,7 @@ interface Props {
   required?: boolean;
   minLength?: number;
   maxLength?: unknown;
+  disabled?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -78,14 +79,25 @@ const props = withDefaults(defineProps<Props>(), {
   autofocus: false,
   required: false,
   minLength: 0,
-  maxLength: undefined
+  maxLength: undefined,
+  disabled: false
 });
+
+const emit = defineEmits(['onBlur', 'update:modelValue'])
 
 const inputType = ref<InputTypeHTMLAttribute | undefined>(props.type || 'text');
 
-const { value, errorMessage, handleChange, handleBlur } = useField(() => props.name, undefined, {
-  syncVModel: true,
-});
+const { value, errorMessage, handleChange, handleBlur } = useField(() => props.name);
+
+const handleInput = (event: Event) => {
+  handleChange(event)
+  emit('update:modelValue', event);
+}
+
+const onBlur = (event: FocusEvent) => {
+  handleBlur(event);
+  emit('onBlur', event);
+}
 
 const togglePassword = () => {
   if (inputType.value === 'text') inputType.value = 'password';

@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watchEffect } from 'vue';
 import { useField } from 'vee-validate';
 import type { MaskaDetail, MaskInputOptions } from 'maska';
 import { vMaska } from 'maska/vue';
@@ -76,4 +76,8 @@ const inputTextClasses = computed(() => {
       errorMessage.value,
   };
 });
+
+watchEffect(()=> {
+  maskedValue.value = value.value;
+})
 </script>

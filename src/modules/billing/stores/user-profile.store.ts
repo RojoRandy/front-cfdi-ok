@@ -9,6 +9,8 @@ import { SaveFiscalDataAction } from "../actions/user-profile/save-fiscal-data.a
 import type { SaveFiscalDataRequest } from "../interfaces/user-profile/save-fiscal-data.interface";
 import type { SaveCommercialNameRequest } from "../interfaces/user-profile/save-commercial-name.interface";
 import { SaveCommercialNameAction } from "../actions/user-profile/save-commercial-name.action";
+import type { SaveFiscalAddressRequest } from "../interfaces/user-profile/save-fiscal-address.interface";
+import { SaveFiscalAddressAction } from "../actions/user-profile/save-fiscal-address.action";
 
 
 export const useUserProfileStore = defineStore('useUserProfileStore', ()=> {
@@ -69,6 +71,25 @@ export const useUserProfileStore = defineStore('useUserProfileStore', ()=> {
     }
   }
 
+  const saveFiscalAddress = async (fiscalAddressRequest: SaveFiscalAddressRequest): Promise<ResponseDto> => {
+    try {
+      const response = await SaveFiscalAddressAction(authStore.emisorId, fiscalAddressRequest);
+
+      if(!response.success){
+        return {
+          success: false,
+          message: response.message
+        };
+      }
+      
+      userProfile.value = response.data;
+      return response
+    } catch (error) {
+      return lackConnectionErrorResponse;
+    }
+  }
+  
+
   return {
     userProfile,
     //Getter
@@ -78,6 +99,7 @@ export const useUserProfileStore = defineStore('useUserProfileStore', ()=> {
     //Actions
     getUserProfile,
     saveFiscalData,
-    saveCommercialName
+    saveCommercialName,
+    saveFiscalAddress
   }
 }) 

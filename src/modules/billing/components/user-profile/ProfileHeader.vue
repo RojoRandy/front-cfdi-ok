@@ -84,7 +84,7 @@ const resize = () => {
 };
 
 onMounted(async () => {
-  await userProfileStore.getUserProfile();
+  nombreComercial.value = userProfileStore.nombreComercial ?? '';
   resize();
 });
 </script>
