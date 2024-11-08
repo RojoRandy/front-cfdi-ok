@@ -68,7 +68,7 @@
           v-if="toggleMenu"
           ref="floatingOptions"
           :style="floatingStyles"
-          class="flex flex-col w-full min-w-[300px] max-w-[500px] gap-1 z-30 bg-white rounded-lg p-2 border-2 shadow-lg"
+          class="flex flex-col w-auto min-w-[300px] max-w-[500px] gap-1 z-30 bg-white rounded-lg p-2 border-2 shadow-lg"
         >
           <input
             ref="optionFilterInputRef"

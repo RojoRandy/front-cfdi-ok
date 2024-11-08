@@ -111,6 +111,7 @@ export const useAuthStore = defineStore('AuthStore', () => {
     emisorId: computed(()=> user.value?.emisorId || 0),
     isEmisor: computed(()=> user.value?.role === 'emisor'),
     fullName: computed(() => user.value?.fullName),
+    email: computed(()=> user.value?.email),
 
     //Actions
     signIn,

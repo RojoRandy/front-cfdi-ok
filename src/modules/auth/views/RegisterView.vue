@@ -49,11 +49,11 @@
             <div class="flex flex-col gap-2 my-4 px-2">
               <p class="font-semibold text-xs">Reglas de seguridad de contraseña</p>
               <ul class="list-disc px-8 text-xs">
-                <li :class="classValidator(values.password!.length >= 8)">Mínimo 8 carácteres</li>
-                <li :class="classValidator(hasUppercase)">Una mayúscula</li>
-                <li :class="classValidator(hasLowercase)">Una minúscula</li>
-                <li :class="classValidator(hasNumber)">Un número (0-9)</li>
-                <li :class="classValidator(hasSpecialChar)">Un carácter especial (# _ @ $)</li>
+                <li :class="passwordClasses(hasMinLength(values.password!,8))">Mínimo 8 carácteres</li>
+                <li :class="passwordClasses(hasUppercase(values.password!))">Una mayúscula</li>
+                <li :class="passwordClasses(hasLowercase(values.password!))">Una minúscula</li>
+                <li :class="passwordClasses(hasNumber(values.password!))">Un número (0-9)</li>
+                <li :class="passwordClasses(hasSpecialChar(values.password!))">Un carácter especial (# _ @ $)</li>
               </ul>
             </div>
 
@@ -130,6 +130,7 @@ import { useAuthStore } from '../stores/auth.store';
 import ErrorOutline from '@/icons/ErrorOutlineIcon.vue';
 import type { ResponseDto } from '@/modules/common/interfaces/api-schema-response';
 import Loading from '@/modules/common/components/Loading.vue';
+import { usePassword } from '../composables/usePassword';
 
 interface Props {
   isNewAccount: boolean;
@@ -139,20 +140,6 @@ defineProps<Props>();
 const emit = defineEmits(['cancel']);
 
 const authStore = useAuthStore();
-
-const hasUppercase = computed(() => validatePasswordContains(/[A-Z]/));
-const hasLowercase = computed(() => validatePasswordContains(/[a-z]/));
-const hasNumber = computed(() => validatePasswordContains(/[0-9]/));
-const hasSpecialChar = computed(() => validatePasswordContains(/[@#$_]/));
-
-const validatePasswordContains = (regex: RegExp) => {
-  for (let i = 0; i < values.password!.length; i++) {
-    let ch = values.password!.charAt(i);
-
-    if (regex.test(ch)) return true;
-  }
-  return false;
-};
 
 const validationSchema = toTypedSchema(
   zod
@@ -192,12 +179,8 @@ const { handleSubmit, handleReset, values } = useForm({
   keepValuesOnUnmount: true
 });
 
-const classValidator = (validator: boolean) => {
-  return {
-    'text-green-500': validator,
-    'text-red-400': !validator,
-  };
-};
+const {hasLowercase, hasMinLength, hasNumber, hasSpecialChar, hasUppercase, passwordClasses} = usePassword();
+
 
 const loading = ref(false);
 const response = ref<ResponseDto | null>(null);
@@ -213,7 +196,7 @@ const onSubmit = handleSubmit(async (values) => {
     password,
     passwordConfirm,
   });
-  console.log(response.value)
+  
   if (response.value.success) {
     registerCompleted.value = true;
   }

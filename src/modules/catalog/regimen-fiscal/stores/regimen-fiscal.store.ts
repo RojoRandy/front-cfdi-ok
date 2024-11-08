@@ -1,8 +1,9 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import type { RegimenFiscal } from "../interfaces/regimen-fiscal.interface";
-import { getAllFiscalRegimesAction } from "../actions/get-all-fiscal-regimes.action";
+import { GetAllFiscalRegimesAction } from "../actions/get-all-fiscal-regimes.action";
 import type { ResponseDto } from "@/modules/common/interfaces/api-schema-response";
+import { lackConnectionErrorResponse } from "@/modules/common/error/general.exception";
 
 
 export const useRegimenFiscalStore = defineStore('RegimenFiscalStore', ()=> {
@@ -12,7 +13,7 @@ export const useRegimenFiscalStore = defineStore('RegimenFiscalStore', ()=> {
   const getAllFiscalRegimes = async (): Promise<ResponseDto> => {
 
     try {
-      const response = await getAllFiscalRegimesAction();
+      const response = await GetAllFiscalRegimesAction();
 
       if(!response.success) {
         return {
@@ -25,10 +26,7 @@ export const useRegimenFiscalStore = defineStore('RegimenFiscalStore', ()=> {
       fiscalRegimes.value = data;
       return rest;
     } catch (error) {
-      return {
-        success: false,
-        message: 'No se pudo realizar la petición, por favor intente de nuevo'
-      }
+      return lackConnectionErrorResponse;
     }
   }
 
