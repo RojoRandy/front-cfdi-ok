@@ -1,13 +1,137 @@
 <template>
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 my-4">
-    <TextInput id="certificate" name="certificate" label="Certificado"  />
-    <TextInput id="publicKey" name="publicKey" label="Llave Pública"  />
-    <TextInput id="password" name="password" type="password" label="Contraseña"  />
-    <TextInput id="passwordConfirm" name="passwordConfirm" type="password" label="Confirmar contraseña"  />
+  <form 
+    id="digitalStampForm"
+    @submit.prevent="onSubmit"
+    class="flex flex-col my-4 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div class="flex flex-col gap-2">
+        <FileInput
+          id="certificate"
+          name="certificate"
+          label="Certificado (archivo .cer)"
+          accept=".cer, application/x-x509-ca-cert, application/pkix-cert"
+          @change="onCertificateChange"
+        />
+        <span
+          :class="{
+            'text-green-500': userProfileStore.csdCredentials?.certificadoSubido,
+            'text-red-500': !userProfileStore.csdCredentials?.certificadoSubido,
+          }">
+          {{ userProfileStore.csdCredentials?.certificadoSubido  ? 'Certificado subido' : 'Certificado pendiente de subir' }}
+        </span>
+      </div>
+      <TextInput
+        id="numSerieCertificado"
+        name="numSerieCertificado"
+        type="text"
+        label="Número de Serie (Certificado)"
+      />
+    </div>
+    <hr>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div class="flex flex-col gap-2">
+        <FileInput
+          id="publicKey"
+          name="publicKey"
+          label="Llave Pública"
+          accept=".key, application/octet-stream, application/vnd.apple.keynote"
+          @change="onPublicKeyChange"
+        />
+        <span
+          :class="{
+            'text-green-500': userProfileStore.csdCredentials?.llavePublicaSubida,
+            'text-red-500': !userProfileStore.csdCredentials?.llavePublicaSubida,
+          }">
+          {{ userProfileStore.csdCredentials?.llavePublicaSubida  ? 'Llave pública subida' : 'Llave pública pendiente de subir' }}
+        </span>
+
+      </div>
+      <TextInput
+        id="contrasenaLlavePublica"
+        name="contrasenaLlavePublica"
+        type="password"
+        label="Contraseña (Llave Pública)"
+      />
+    </div>
+  </form>
+  <div
+    class="border-t-2 pt-2"
+  >
+    <div class="flex flex-row justify-center">
+      <button
+        form="digitalStampForm"
+        type="submit"
+        class="btn-primary"
+        :disabled="isLoading"
+      >
+        Guardar
+      </button>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import FileInput from '@/modules/common/components/FileInput.vue';
 import TextInput from '@/modules/common/components/TextInput.vue';
+import { toTypedSchema } from '@vee-validate/zod';
+import { useForm } from 'vee-validate';
+import { onMounted, ref } from 'vue';
+import * as zod from 'zod'
+import { useUserProfileStore } from '../stores/user-profile.store';
 
+const userProfileStore = useUserProfileStore()
+
+const isLoading = ref(false)
+const validationSchema = toTypedSchema(zod.object({
+  numSerieCertificado: zod.string({message: "Ingresar el número de serie de tu certificado"}),
+  contrasenaLlavePublica: zod.string({message: "Ingresar contraseña de tu llave pública"})
+}))
+
+const {handleSubmit, resetForm} = useForm({
+  validationSchema,
+  keepValuesOnUnmount: true,
+})
+
+const onCertificateChange = async (files: FileList) => {
+  isLoading.value = true;
+  if(files && files.length) {
+    const response = await userProfileStore.saveCsdCertificateFile(files[0])
+
+    if(!response.success) console.log(response.message);
+  }
+  isLoading.value = false;
+}
+
+const onPublicKeyChange = async (files: FileList) => {
+  isLoading.value = true;
+  if(files && files.length) {
+    const response = await userProfileStore.saveCsdPublicKeyFile(files[0])
+
+    if(!response.success) console.log(response.message);
+  }
+  isLoading.value = false;
+}
+
+const onSubmit = handleSubmit(async(values)=>{
+  isLoading.value = true;
+
+  const response = await userProfileStore.saveCsdCredentials(values)
+
+  if(!response.success) console.log(response.success);
+
+  isLoading.value = false;
+})
+
+onMounted(async ()=>{
+  isLoading.value = true;
+  await userProfileStore.getCsdCredentials()
+
+  resetForm({
+    values: {
+      numSerieCertificado: userProfileStore.csdCredentials?.numSerieCertificado,
+      contrasenaLlavePublica: userProfileStore.csdCredentials?.contrasenaLlavePublica
+    }
+  })
+  isLoading.value = false;
+})
 </script>

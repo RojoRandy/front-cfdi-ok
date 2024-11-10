@@ -15,11 +15,18 @@ import type { SaveUserInfoRequest } from "../interfaces/save-account-info.interf
 import { SaveUserInfoAction } from "../actions/save-account-info.action";
 import { UpdateUserPasswordAction } from "../actions/update-user-password.action";
 import type { UpdateUserPasswordRequest } from "../interfaces/update-user-password.interface";
+import { GetCsdCredentialsAction } from "../actions/get-csd-credentials.action";
+import type { CsdCredentials } from "../interfaces/get-csd-credentials.interface";
+import { SaveCsdCertificateFileAction } from "../actions/save-csd-certificate-file.action";
+import { SaveCsdPublicKeyFileAction } from "../actions/save-csd-public-key-file.action";
+import { SaveCsdCredentialsAction } from "../actions/save-csd-crendentials.action";
+import type { SaveCsdCredentialsRequest } from "../interfaces/save-csd-credentials.interface";
 
 
 export const useUserProfileStore = defineStore('useUserProfileStore', ()=> {
   const authStore = useAuthStore();
   const userProfile = ref<EmisorProfile>()
+  const csdCredentials = ref<CsdCredentials>()
   
   const getUserProfile = async (): Promise<ResponseDto> => {
     try {
@@ -112,7 +119,6 @@ export const useUserProfileStore = defineStore('useUserProfileStore', ()=> {
     }
   }
   
-  
   const updateUserPassword = async (passwordRequest: UpdateUserPasswordRequest): Promise<ResponseDto> => {
     try {
       const response = await UpdateUserPasswordAction(authStore.emisorId, passwordRequest);
@@ -130,8 +136,82 @@ export const useUserProfileStore = defineStore('useUserProfileStore', ()=> {
     }
   }
 
+  const getCsdCredentials = async () => {
+    try {
+      const response = await GetCsdCredentialsAction(authStore.emisorId);
+
+      if(!response.success){
+        return {
+          success: false,
+          message: response.message
+        };
+      }
+      
+      csdCredentials.value = response.data
+      return response
+    } catch (error) {
+      return lackConnectionErrorResponse;
+    }
+  }
+
+  const saveCsdCredentials = async (request: SaveCsdCredentialsRequest) => {
+    try {
+      const response = await SaveCsdCredentialsAction(authStore.emisorId, request);
+
+      if(!response.success){
+        return {
+          success: false,
+          message: response.message
+        };
+      }
+      
+      csdCredentials.value = response.data
+      return response
+    } catch (error) {
+      return lackConnectionErrorResponse;
+    }
+  }
+
+  const saveCsdCertificateFile = async (file: any) => {
+    try {
+      const response = await SaveCsdCertificateFileAction(authStore.emisorId, file);
+
+      if(!response.success){
+        return {
+          success: false,
+          message: response.message
+        };
+      }
+      
+      csdCredentials.value = response.data
+      return response
+    } catch (error) {
+      return lackConnectionErrorResponse;
+    }
+  }
+
+  const saveCsdPublicKeyFile = async (file: any) => {
+    try {
+      const response = await SaveCsdPublicKeyFileAction(authStore.emisorId, file);
+
+      if(!response.success){
+        return {
+          success: false,
+          message: response.message
+        };
+      }
+      
+      csdCredentials.value = response.data
+      return response
+    } catch (error) {
+      return lackConnectionErrorResponse;
+    }
+  }
+
   return {
     userProfile,
+    csdCredentials,
+    
     //Getter
     persona: computed(()=> userProfile.value?.persona),
     nombreComercial: computed(() => userProfile.value?.nombreComercial),
@@ -143,5 +223,9 @@ export const useUserProfileStore = defineStore('useUserProfileStore', ()=> {
     saveFiscalAddress,
     saveUserInfo,
     updateUserPassword,
+    getCsdCredentials,
+    saveCsdCredentials,
+    saveCsdCertificateFile,
+    saveCsdPublicKeyFile
   }
 }) 
