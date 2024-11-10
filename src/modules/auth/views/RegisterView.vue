@@ -1,56 +1,219 @@
 <template>
-  <h1 class="text-2xl font-semibold mb-4">Nueva cuenta</h1>
-  <form action="#" method="POST">
-    <!-- Username Input -->
-    <div class="mb-4">
-      <label for="name" class="block text-gray-600">Nombre</label>
-      <input
-        type="text"
-        id="name"
-        name="name"
-        class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
-        autocomplete="off"
-      />
-    </div>
+  <Modal
+    v-if="isNewAccount"
+    :title="!registerCompleted ? 'Crear nueva cuenta' : 'Registro Completado'"
+    @close="onCancel"
+  >
+    <template v-slot:body>
+      <template
+        v-if="!registerCompleted"
+      >
+        <div 
+          v-if="loading"
+          class="w-full flex flex-col items-center justify-center h-[200px]"
+        >
+          <Loading />
+        </div>
+        <div
+          v-else
+          class="flex flex-col px-2 md:px-4"
+        >
+          <p class="self-center mb-2 text-center text-sm">Estas a unos pasos de emitir tu primera factura</p>
+          <form @submit="onSubmit" id="registerForm">
+            <TextInput
+              id="fullName"
+              name="fullName"
+              type="text"
+              label="Nombre completo"
+              placeholder="Ingresa tu nombre"
+              autofocus
+            />
 
-    <!-- Username Input -->
-    <div class="mb-4">
-      <label for="email" class="block text-gray-600">Correo</label>
-      <input
-        type="email"
-        id="email"
-        name="email"
-        class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
-        autocomplete="off"
-      />
-    </div>
-    <!-- Password Input -->
-    <div class="mb-4">
-      <label for="password" class="block text-gray-600">Contraseña</label>
-      <input
-        type="password"
-        id="password"
-        name="password"
-        class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
-        autocomplete="off"
-      />
-    </div>
-    <!-- Forgot Password Link -->
-    <div class="mb-6 text-blue-500">
-      <a href="#" class="hover:underline">¿Olvidaste la contraseña?</a>
-    </div>
-    <!-- Login Button -->
-    <button
-      type="submit"
-      class="bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md py-2 px-4 w-full"
-    >
-      Crear cuenta
-    </button>
-  </form>
-  <!-- Sign up  Link -->
-  <div class="mt-6 text-blue-500 text-center">
-    <RouterLink :to="{ name: 'login' }" class="hover:underline"
-      >Ingresar aquí</RouterLink
-    >
-  </div>
+            <TextInput
+              id="email"
+              name="email"
+              type="text"
+              label="Correo Electrónico"
+              placeholder="ejemplo@correo.com"
+            />
+
+            <TextInput
+              id="password"
+              name="password"
+              type="password"
+              label="Contraseña"
+              placeholder="Ingresar contraseña"
+              :show-errors="false"
+            />
+
+            <div class="flex flex-col gap-2 my-4 px-2">
+              <p class="font-semibold text-xs">Reglas de seguridad de contraseña</p>
+              <ul class="list-disc px-8 text-xs">
+                <li :class="passwordClasses(hasMinLength(values.password!,8))">Mínimo 8 carácteres</li>
+                <li :class="passwordClasses(hasUppercase(values.password!))">Una mayúscula</li>
+                <li :class="passwordClasses(hasLowercase(values.password!))">Una minúscula</li>
+                <li :class="passwordClasses(hasNumber(values.password!))">Un número (0-9)</li>
+                <li :class="passwordClasses(hasSpecialChar(values.password!))">Un carácter especial (# _ @ $)</li>
+              </ul>
+            </div>
+
+            <TextInput
+              id="passwordConfirm"
+              name="passwordConfirm"
+              type="password"
+              label="Confirmar Contraseña"
+              placeholder="Confirmar contraseña"
+            />
+
+            <div
+              v-if="response?.success === false"
+              class="flex flex-row gap-4 items-center bg-red-400 text-white font-semibold text-center px-4 py-2 rounded-md mt-2"
+            >
+              <ErrorOutline class="fill-white" />
+              <span>{{ response?.message ?? 'Ocurrio un error inesperado, por favor vuelva a intentar' }}</span>
+            </div>
+          </form>
+
+        </div>
+
+      </template>
+      <div
+        v-else
+        class="flex flex-col px-2 md:px-4 text-center font-semibold text-md space-y-4"
+      >
+        <p>Gracias por completar tu registro.</p>
+        <p>En breve recibirás un correo para confirmar sus datos de registro.</p>
+        <p>Ya puedes acceder a la plataforma para empezar a conocerla</p>
+        <button
+          class="btn-primary"
+          type="button"
+          @click="enterToWebsite"
+        >
+          Ingresar al sitio
+        </button>
+      </div>
+    </template>
+    <template v-if="!registerCompleted && !loading" v-slot:footer>
+      <div class="flex flex-row justify-end w-full gap-4">
+        <button
+          form="registerForm"
+          type="reset"
+          class="btn-secondary flex-1"
+          @click="onCancel"
+          :disabled="loading"
+        >
+          Cancelar
+        </button>
+        <button
+          form="registerForm"
+          type="submit"
+          class="btn-primary flex-1"
+          :disabled="loading"
+        >
+          Crear cuenta
+        </button>
+
+      </div>
+    </template>
+  </Modal>
 </template>
+
+<script setup lang="ts">
+import { computed, ref } from 'vue';
+import { useForm } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/zod';
+import * as zod from 'zod';
+
+import Modal from '@/modules/common/components/Modal.vue';
+import TextInput from '@/modules/common/components/TextInput.vue';
+import { useAuthStore } from '../stores/auth.store';
+import ErrorOutline from '@/icons/ErrorOutlineIcon.vue';
+import type { ResponseDto } from '@/modules/common/interfaces/api-schema-response';
+import Loading from '@/modules/common/components/Loading.vue';
+import { usePassword } from '../composables/usePassword';
+
+interface Props {
+  isNewAccount: boolean;
+}
+
+defineProps<Props>();
+const emit = defineEmits(['cancel']);
+
+const authStore = useAuthStore();
+
+const validationSchema = toTypedSchema(
+  zod
+    .object({
+      fullName: zod
+        .string({ message: 'Debes ingresar tu nombre'})
+        .min(1, { message: 'Debes ingresar tu nombre'}),
+      email: zod
+        .string({ message: 'Correo por ingresar' })
+        .email({ message: 'Debe ser un correo válido' }),
+      password: zod
+        .string({ message: 'Contraseña por ingresar' })
+        .min(8, { message: 'Contraseña muy corta' }),
+      passwordConfirm: zod
+        .string({ message: 'Contraseña por ingresar' })
+        .min(8, { message: 'Contraseña muy corta' }),
+    })
+    .superRefine(({ password, passwordConfirm }, ctx) => {
+      if (passwordConfirm !== password) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'Las contraseñas no coinciden',
+          path: ['passwordConfirm'],
+        });
+      }
+    }),
+);
+
+const { handleSubmit, handleReset, values } = useForm({
+  validationSchema,
+  initialValues: {
+    fullName: '',
+    email: '',
+    password: '',
+    passwordConfirm: '',
+  },
+  keepValuesOnUnmount: true
+});
+
+const {hasLowercase, hasMinLength, hasNumber, hasSpecialChar, hasUppercase, passwordClasses} = usePassword();
+
+
+const loading = ref(false);
+const response = ref<ResponseDto | null>(null);
+
+const registerCompleted = ref(false);
+
+const onSubmit = handleSubmit(async (values) => {
+  loading.value = true;
+  const { fullName, email, password, passwordConfirm } = values;
+  response.value = await authStore.register({
+    fullName,
+    email,
+    password,
+    passwordConfirm,
+  });
+  
+  if (response.value.success) {
+    registerCompleted.value = true;
+  }
+
+  loading.value = false;
+});
+
+const enterToWebsite = () => {
+  authStore.postRegister();
+}
+
+const onCancel = () => {
+  handleReset();
+  registerCompleted.value = false;
+  loading.value = false;
+  response.value = null;
+  emit('cancel');
+};
+
+</script>

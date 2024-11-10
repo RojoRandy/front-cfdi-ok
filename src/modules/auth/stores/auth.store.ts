@@ -1,31 +1,41 @@
 import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
-import { AuthStatus, type User } from '../interfaces';
-import { LoginAction } from '../actions';
-import { useLocalStorage } from '@vueuse/core';
+import { AuthStatus, type SignInResponse, type User } from '../interfaces';
+import { SignInAction } from '../actions';
 import { RegisterAction } from '../actions/register.action';
+import { checkAuthAction } from '../actions/check-auth.action';
+import type { RegisterRequest } from '../interfaces/register.request';
+import { useLocalStorage } from '@vueuse/core';
+import type { ResponseDto } from '@/modules/common/interfaces/api-schema-response';
+import { lackConnectionErrorResponse } from '@/modules/common/error/general.exception';
 
 export const useAuthStore = defineStore('AuthStore', () => {
   const authStatus = ref<AuthStatus>(AuthStatus.Checking);
   const user = ref<User | undefined>();
   const token = ref(useLocalStorage('token', ''));
+  const isLoading = ref(false)
 
-  const login = async (email: string, password: string) => {
+  const signIn = async (email: string, password: string): Promise<ResponseDto> => {
     try {
-      const loginResponse = await LoginAction(email, password);
+      const response = await SignInAction(email, password);
 
-      if (!loginResponse.ok) {
+      if (!response.success) {
         logout();
-        return false;
+        return {
+          success: false,
+          message: response.message
+        };
       }
 
-      user.value = loginResponse.user;
-      token.value = loginResponse.token;
+      const signInResponse: SignInResponse = response.data;
+
+      user.value = signInResponse.user;
+      token.value = signInResponse.token;
       authStatus.value = AuthStatus.Authenticated;
-      return true;
+      return response;
     } catch (error) {
       logout();
-      return false;
+      return lackConnectionErrorResponse;
     }
   };
 
@@ -36,43 +46,79 @@ export const useAuthStore = defineStore('AuthStore', () => {
     return true;
   };
 
-  const register = async (
-    fullName: string,
-    email: string,
-    password: string,
-  ) => {
+  const register = async (registerRequest: RegisterRequest): Promise<ResponseDto> => {
     try {
-      const registerResponse = await RegisterAction(fullName, email, password);
+      const response = await RegisterAction(registerRequest);
 
-      if (!registerResponse.ok) {
+      if (!response.success) {
+        logout();
+        return {
+          success: false,
+          message: response.message
+        };
+      }
+      const registerResponse: SignInResponse = response.data;
+      user.value = registerResponse.user;
+      token.value = registerResponse.token;
+      return response;
+    } catch (error) {
+      logout();
+      return lackConnectionErrorResponse;
+    }
+  };
+
+  const postRegister = () => {
+    authStatus.value = AuthStatus.Checking;
+  }
+
+  const checkAuthStatus = async (): Promise<boolean> => {
+    try {
+      const response = await checkAuthAction();
+
+      if (!response.success) {
         logout();
         return false;
       }
 
-      user.value = registerResponse.user;
-      token.value = registerResponse.token;
+      const checkAuthResponse: SignInResponse = response.data;
       authStatus.value = AuthStatus.Authenticated;
+      user.value = checkAuthResponse.user;
+      token.value = checkAuthResponse.token;
       return true;
     } catch (error) {
       logout();
       return false;
     }
-  };
+  }
+
+  
+  const setIsLoading = (value: boolean) => {
+    isLoading.value = value;
+  }
 
   return {
     user,
     token,
     authStatus,
+    isLoading,
 
     //Getter
     isChecking: computed(() => authStatus.value === AuthStatus.Checking),
-    isAuhtenticated: computed(() => authStatus.value === AuthStatus.Checking),
-    //TODO: getter para saber si es Admin o no
-    username: computed(() => user.value?.fullName),
+    isAuthenticated: computed(() => authStatus.value === AuthStatus.Authenticated),
+    isUnauthenticated: computed(() => authStatus.value === AuthStatus.Unauthenticated),
+    isAdmin: computed(()=> user.value?.role === 'admin'),
+
+    emisorId: computed(()=> user.value?.emisorId || 0),
+    isEmisor: computed(()=> user.value?.role === 'emisor'),
+    fullName: computed(() => user.value?.fullName),
+    email: computed(()=> user.value?.email),
 
     //Actions
-    login,
+    signIn,
     logout,
     register,
+    checkAuthStatus,
+    postRegister,
+    setIsLoading
   };
 });
