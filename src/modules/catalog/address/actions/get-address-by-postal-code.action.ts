@@ -1,7 +1,7 @@
 import { cfdiOkApi } from "@/api/cfdiOkApi"
 import { generalException } from "@/modules/common/error/general.exception";
 import type { SchemaResponse } from "@/modules/common/interfaces/api-schema-response";
-import type { Address } from "cluster";
+import type { Address } from "../interfaces/address.interface";
 
 
 export const GetAddressByPostalCodeAction = async (codigoPostal: string): Promise<SchemaResponse<Address> | SchemaResponse<any>> => {
