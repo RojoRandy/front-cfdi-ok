@@ -49,11 +49,13 @@ import { useMailSenderStore } from '@/modules/shared/mailer/mail-sender/stores/u
 import { toTypedSchema } from '@vee-validate/zod';
 import { useForm } from 'vee-validate';
 import { onMounted, ref } from 'vue';
+import { useToast } from 'vue-toastification';
 import * as zod from 'zod';
 
 const mailServerStore = useMailServerStore();
-const mailSenderStore = useMailSenderStore()
+const mailSenderStore = useMailSenderStore();
 const isLoading = ref(false);
+const toast = useToast();
 
 const validationSchema = toTypedSchema(
   zod.object({
@@ -72,9 +74,13 @@ const {handleSubmit, resetForm} = useForm({
   keepValuesOnUnmount: true
 })
 
-const onSubmit = handleSubmit((values)=>{
+const onSubmit = handleSubmit(async (values)=>{
   isLoading.value = true;
-  console.log(values)
+  const response = await mailSenderStore.saveMailSender(values)
+
+  if(!response.success) toast.error(response.message);
+
+  toast.success('La configuración de correo se guardó correctamente');
   isLoading.value = false;
 })
 

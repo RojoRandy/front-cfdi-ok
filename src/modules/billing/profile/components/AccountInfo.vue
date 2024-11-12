@@ -53,11 +53,13 @@ import * as zod from 'zod';
 import { useAuthStore } from '@/modules/auth/stores/auth.store';
 import { useUserProfileStore } from '../stores/user-profile.store';
 import UpdatePasswordAccount from './UpdatePasswordAccount.vue';
+import { useToast } from 'vue-toastification';
 
 const authStore = useAuthStore();
 const userProfileStore = useUserProfileStore();
-
+const toast = useToast();
 const updatePassword = ref(false)
+
 const validationSchema = toTypedSchema(
   zod.object({
     fullName: zod
@@ -77,7 +79,10 @@ const { handleSubmit, resetForm } = useForm({
 const onSubmit = handleSubmit(async (values) => {
   const response = await userProfileStore.saveUserInfo(values);
 
-  if (response.success) console.log(response.message);
+  if(!response.success) toast.error(response.message);
+  
+  toast.success('La información de la cuenta se guardó correctamente');
+
 });
 
 const setInitialValues = () => {

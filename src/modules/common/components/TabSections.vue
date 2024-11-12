@@ -5,6 +5,7 @@
       <div class="flex-1 flex flex-col md:flex-wrap md:flex-row lg:gap-4 font-semibold">
         <span
           v-for="(section, index) in sections"
+          :key="section.name+'-'+index"
           class="p-2 rounded-md flex-1 md:flex-none hover:text-white select-none hover:bg-slate-800 transition-all duration-200 active:bg-cyan-600 hover:cursor-pointer"
           :class="{
             'bg-slate-800 text-white text-center': section.isActive,

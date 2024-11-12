@@ -70,8 +70,10 @@ import { rfcPFRegex, rfcPMRegex } from '@/modules/common/utils/regex';
 import { useRegimenFiscalStore } from '@/modules/catalog/regimen-fiscal/stores/regimen-fiscal.store';
 import { useUserProfileStore } from '../stores/user-profile.store';
 import Loading from '@/modules/common/components/Loading.vue';
+import { useToast } from 'vue-toastification';
 
 const isLoading = ref(false);
+const toast = useToast();
 
 const options = ref<MaskInputOptions>({
   mask: 'AAAM-######-XXX',
@@ -123,7 +125,9 @@ const onSubmit = handleSubmit(async (values) => {
   isLoading.value = true;
   const response = await userProfileStore.saveFiscalData(values)
 
-  if(!response.success) console.log(response.message);
+  if(!response.success) toast.error(response.message);
+
+  toast.success('La información fiscal se guardó correctamente');
   isLoading.value = false;
 });
 

@@ -78,10 +78,12 @@ import { useForm } from 'vee-validate';
 import { onMounted, ref } from 'vue';
 import * as zod from 'zod'
 import { useUserProfileStore } from '../stores/user-profile.store';
+import { useToast } from 'vue-toastification';
 
 const userProfileStore = useUserProfileStore()
-
 const isLoading = ref(false)
+const toast = useToast();
+
 const validationSchema = toTypedSchema(zod.object({
   numSerieCertificado: zod.string({message: "Ingresar el número de serie de tu certificado"}),
   contrasenaLlavePublica: zod.string({message: "Ingresar contraseña de tu llave pública"})
@@ -97,7 +99,8 @@ const onCertificateChange = async (files: FileList) => {
   if(files && files.length) {
     const response = await userProfileStore.saveCsdCertificateFile(files[0])
 
-    if(!response.success) console.log(response.message);
+    if(!response.success) toast.error(response.message);
+    toast.success('El certificado se guardó correctamente');
   }
   isLoading.value = false;
 }
@@ -107,7 +110,8 @@ const onPublicKeyChange = async (files: FileList) => {
   if(files && files.length) {
     const response = await userProfileStore.saveCsdPublicKeyFile(files[0])
 
-    if(!response.success) console.log(response.message);
+    if(!response.success) toast.error(response.message);
+    toast.success('La Llave Pública se guardó correctamente');
   }
   isLoading.value = false;
 }
@@ -117,7 +121,8 @@ const onSubmit = handleSubmit(async(values)=>{
 
   const response = await userProfileStore.saveCsdCredentials(values)
 
-  if(!response.success) console.log(response.success);
+  if(!response.success) toast.error(response.message);
+  toast.success('Las credenciales se guardaron correctamente');
 
   isLoading.value = false;
 })

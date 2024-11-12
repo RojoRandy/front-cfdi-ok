@@ -51,9 +51,11 @@ import { onMounted, ref } from 'vue';
 import EditIcon from '@/icons/EditIcon.vue';
 import SaveIcon from '@/icons/SaveIcon.vue';
 import { useUserProfileStore } from '../stores/user-profile.store';
+import { useToast } from 'vue-toastification';
 
 const userProfileStore = useUserProfileStore()
 const nombreComercial = ref<string>(userProfileStore.nombreComercial ?? '')
+const toast = useToast();
 
 const commercialNameRef = ref<HTMLTextAreaElement>();
 const isEditing = ref(false);
@@ -73,8 +75,9 @@ const onSaveCommercialName = async() => {
     nombreComercial: nombreComercial.value
   });
   
-  if(!response.success) console.log(response.message)
+  if(!response.success) toast.error(response.message);
 
+  toast.success('El nombre comercial se guardó correctamente');
   commercialNameRef.value!.disabled = true;
   isEditing.value = false;
 };

@@ -149,6 +149,7 @@ import { type Estado, type Municipio, type Pais, type Persona } from '../interfa
 import SelectInput from '@/modules/common/components/SelectInput.vue';
 import { useUserProfileStore } from '../stores/user-profile.store';
 import Loading from '@/modules/common/components/Loading.vue';
+import { useToast } from 'vue-toastification';
 
 const userProfileStore = useUserProfileStore()
 const {getPaises, getEstadosByPais, getMunicipiosByEstado, getAddressByPostalCode} = useAddress()
@@ -159,6 +160,7 @@ const colonias = ref<any[]>([])
 const disableAddressByPostalCode = ref(true);
 const previousPostalCode = ref('');
 const isLoading = ref(false);
+const toast = useToast();
 
 const validationSchema = toTypedSchema(
   zod.object({
@@ -187,8 +189,9 @@ const onSubmit = handleSubmit(async (values)=> {
   
   const response = await userProfileStore.saveFiscalAddress(values)
 
-  if(!response.success) console.log(response.message);
+  if(!response.success) toast.error(response.message);
   
+  toast.success('El domicilio fiscal se guardó correctamente');
   isLoading.value = false;
 })
 
@@ -254,6 +257,7 @@ const handleLoadMunicipios = async(estadoId: number)=> {
 }
 
 const setInitialValues = async(persona: Persona) => {
+  if(!persona) return;
   await handleLoadPaises();
   await handleLoadEstados(persona.pais.id!);
   await handleLoadMunicipios(persona.estado.id!);
