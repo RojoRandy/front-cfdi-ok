@@ -54,11 +54,13 @@ import { useAuthStore } from '@/modules/auth/stores/auth.store';
 import { useUserProfileStore } from '../stores/user-profile.store';
 import UpdatePasswordAccount from './UpdatePasswordAccount.vue';
 import { useToast } from 'vue-toastification';
+import { useLoadingView } from '@/modules/common/composables/useLoadingView';
 
+const loadingView = useLoadingView()
 const authStore = useAuthStore();
 const userProfileStore = useUserProfileStore();
 const toast = useToast();
-const updatePassword = ref(false)
+const updatePassword = ref(false);
 
 const validationSchema = toTypedSchema(
   zod.object({
@@ -77,12 +79,13 @@ const { handleSubmit, resetForm } = useForm({
 });
 
 const onSubmit = handleSubmit(async (values) => {
+  loadingView.setIsLoading(true);
   const response = await userProfileStore.saveUserInfo(values);
-
+  
   if(!response.success) toast.error(response.message);
   
   toast.success('La información de la cuenta se guardó correctamente');
-
+  loadingView.setIsLoading(false);
 });
 
 const setInitialValues = () => {
@@ -95,6 +98,8 @@ const setInitialValues = () => {
 };
 
 onMounted(() => {
+  loadingView.setIsLoading(true);
   setInitialValues();
+  loadingView.setIsLoading(false);
 });
 </script>

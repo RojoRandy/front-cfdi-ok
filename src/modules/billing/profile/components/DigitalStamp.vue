@@ -79,7 +79,9 @@ import { onMounted, ref } from 'vue';
 import * as zod from 'zod'
 import { useUserProfileStore } from '../stores/user-profile.store';
 import { useToast } from 'vue-toastification';
+import { useLoadingView } from '@/modules/common/composables/useLoadingView';
 
+const loadingView = useLoadingView()
 const userProfileStore = useUserProfileStore()
 const isLoading = ref(false)
 const toast = useToast();
@@ -95,40 +97,40 @@ const {handleSubmit, resetForm} = useForm({
 })
 
 const onCertificateChange = async (files: FileList) => {
-  isLoading.value = true;
+  loadingView.setIsLoading(true);
   if(files && files.length) {
     const response = await userProfileStore.saveCsdCertificateFile(files[0])
 
     if(!response.success) toast.error(response.message);
     toast.success('El certificado se guardó correctamente');
   }
-  isLoading.value = false;
+  loadingView.setIsLoading(false);
 }
 
 const onPublicKeyChange = async (files: FileList) => {
-  isLoading.value = true;
+  loadingView.setIsLoading(true);
   if(files && files.length) {
     const response = await userProfileStore.saveCsdPublicKeyFile(files[0])
 
     if(!response.success) toast.error(response.message);
     toast.success('La Llave Pública se guardó correctamente');
   }
-  isLoading.value = false;
+  loadingView.setIsLoading(false);
 }
 
 const onSubmit = handleSubmit(async(values)=>{
-  isLoading.value = true;
+  loadingView.setIsLoading(true);
 
   const response = await userProfileStore.saveCsdCredentials(values)
 
   if(!response.success) toast.error(response.message);
   toast.success('Las credenciales se guardaron correctamente');
 
-  isLoading.value = false;
+  loadingView.setIsLoading(false);
 })
 
 onMounted(async ()=>{
-  isLoading.value = true;
+  loadingView.setIsLoading(true);
   await userProfileStore.getCsdCredentials()
 
   resetForm({
@@ -137,6 +139,6 @@ onMounted(async ()=>{
       contrasenaLlavePublica: userProfileStore.csdCredentials?.contrasenaLlavePublica
     }
   })
-  isLoading.value = false;
+  loadingView.setIsLoading(false);
 })
 </script>

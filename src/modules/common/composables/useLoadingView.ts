@@ -1,6 +1,7 @@
+import { defineStore } from "pinia"
 import { ref } from "vue"
 
-export const useLoadingView = () => {
+export const useLoadingView = defineStore('useLoadingView', ()=> {
   const isLoading = ref(false);
 
   const setIsLoading = (value: boolean) => {
@@ -11,4 +12,4 @@ export const useLoadingView = () => {
     isLoading,
     setIsLoading
   }
-}
+})

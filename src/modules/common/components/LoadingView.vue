@@ -1,12 +1,15 @@
 <template>
   <div
+    v-if="loadingView.isLoading"
     class="fixed inset-0 flex justify-center items-center bg-white bg-opacity-80 z-40"
     role="dialog"
     aria-labelledby="modalTitle"
     aria-describedby="modalDescription"
   ></div>
 
-  <div class="fixed inset-0 z-40">
+  <div 
+    v-if="loadingView.isLoading"
+    class="fixed inset-0 z-40">
     <div class="flex h-screen justify-items-center items-center justify-center">
       <div class="w-10/12 max-w-[500px] md:w-[500px] rounded-lg">
         <div class="flex justify-center">
@@ -18,6 +21,16 @@
   </div>
 </template>
 
+<script setup lang="ts">
+import { useLoadingView } from '@/modules/common/composables/useLoadingView';
+import { onMounted } from 'vue';
+
+const loadingView = useLoadingView()
+
+onMounted(()=>{
+  loadingView.setIsLoading(false);
+})
+</script>
 
 <style scoped>
 .loader {

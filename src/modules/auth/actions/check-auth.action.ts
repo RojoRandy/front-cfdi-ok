@@ -6,7 +6,7 @@ import { generalException } from '@/modules/common/error/general.exception';
 export const checkAuthAction = async (): Promise<SchemaResponse<SignInResponse> | SchemaResponse<any>> => {
   try {
     const localToken = localStorage.getItem('token');
-    if (localToken && localToken.length < 10) {
+    if (!localToken || localToken === '') {
       return { 
         success: false,
         message: 'No se pudo verificar la sesión',

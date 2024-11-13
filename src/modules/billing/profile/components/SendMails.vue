@@ -51,7 +51,9 @@ import { useForm } from 'vee-validate';
 import { onMounted, ref } from 'vue';
 import { useToast } from 'vue-toastification';
 import * as zod from 'zod';
+import { useLoadingView } from '@/modules/common/composables/useLoadingView';
 
+const loadingView = useLoadingView()
 const mailServerStore = useMailServerStore();
 const mailSenderStore = useMailSenderStore();
 const isLoading = ref(false);
@@ -75,18 +77,18 @@ const {handleSubmit, resetForm} = useForm({
 })
 
 const onSubmit = handleSubmit(async (values)=>{
-  isLoading.value = true;
+  loadingView.setIsLoading(true);
   const response = await mailSenderStore.saveMailSender(values)
 
   if(!response.success) toast.error(response.message);
 
   toast.success('La configuración de correo se guardó correctamente');
-  isLoading.value = false;
+  loadingView.setIsLoading(false);
 })
 
 
 onMounted(async ()=> {
-  isLoading.value = true;
+  loadingView.setIsLoading(true);
   
   await mailSenderStore.getMailSender();
   
@@ -100,7 +102,7 @@ onMounted(async ()=> {
     })
   }
 
-  isLoading.value = false;
+  loadingView.setIsLoading(false);
 })
 
 </script>

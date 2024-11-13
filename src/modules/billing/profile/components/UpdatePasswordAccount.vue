@@ -2,6 +2,7 @@
   <Modal
     v-if="isOpen"
     title="Cambiar Contraseña"
+    @close="onCancel"
   >
     <template v-slot:body>
 
@@ -12,14 +13,7 @@
         </div>
       </template>
       <template v-else>
-        <div 
-          v-if="isLoading"
-          class="w-full flex flex-col items-center justify-center h-[200px]"
-        >
-          <Loading />
-        </div>
         <form
-          v-else
           id="updatePasswordForm"
           @submit="onSubmit"
         >
@@ -63,7 +57,6 @@
           type="reset"
           class="btn-secondary flex-1"
           @click="onCancel"
-          :disabled="isLoading"
         >
           Cancelar
         </button>
@@ -72,7 +65,6 @@
           form="updatePasswordForm"
           type="submit"
           class="btn-primary flex-1"
-          :disabled="isLoading"
         >
           Actualizar
         </button>
@@ -81,7 +73,6 @@
           type="reset"
           form="updatePasswordForm"
           class="btn-primary flex-1"
-          :disabled="isLoading"
           @click="onCancel"
         >
           Finalizar
@@ -102,8 +93,8 @@ import { useForm } from 'vee-validate';
 import { ref } from 'vue';
 import * as zod from 'zod';
 import { useUserProfileStore } from '../stores/user-profile.store';
-import Loading from '@/modules/common/components/Loading.vue';
 import { useToast } from 'vue-toastification';
+import { useLoadingView } from '@/modules/common/composables/useLoadingView';
 
 interface Props {
   isOpen: boolean;
@@ -114,7 +105,7 @@ const emit = defineEmits(['cancel'])
 
 const toast = useToast();
 const userProfileStore = useUserProfileStore()
-const isLoading = ref(false);
+const loadingView = useLoadingView()
 const passwordUpdated = ref(false);
 const validationSchema = toTypedSchema(
   zod
@@ -154,17 +145,17 @@ const { handleSubmit, handleReset, values } = useForm({
 const {hasLowercase, hasMinLength, hasNumber, hasSpecialChar, hasUppercase, passwordClasses} = usePassword();
 
 const onSubmit = handleSubmit(async (values)=>{
-  isLoading.value = true;
+  loadingView.setIsLoading(true);
   const response = await userProfileStore.updateUserPassword(values);
   
   if(!response.success) {
     toast.error(response.message);
-    isLoading.value = false;
+    loadingView.setIsLoading(false);
     return;
   }
 
   passwordUpdated.value = true;
-  isLoading.value = false;
+  loadingView.setIsLoading(false);
 })
 
 const onCancel = () => {

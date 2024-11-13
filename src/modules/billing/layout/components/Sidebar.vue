@@ -23,6 +23,7 @@
         :icon="item.icon"
         :text="item.text"
         :route-name="item.routeName"
+        @item-click="visible ? $emit('close') : null"
       />
     </div>
   </aside>

@@ -1,44 +1,36 @@
 <template>
-  <div
-    v-if="isLoading"
-    class="w-full flex flex-col items-center justify-center h-[200px]"
+  <p class="mt-4 text-md text-slate-700">Recuerda que estos campos deben estar ingresados exactamente igual a como se muestra en tu Constancia de Situacion Fiscal</p>
+  <form
+    id="fiscalDataForm"
+    @submit="onSubmit"
+    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 my-4"
   >
-    <Loading />
-  </div>
-  <template v-else>
-    <p class="mt-4 text-md text-slate-700">Recuerda que estos campos deben estar ingresados exactamente igual a como se muestra en tu Constancia de Situacion Fiscal</p>
-    <form
-      id="fiscalDataForm"
-      @submit="onSubmit"
-      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 my-4"
-    >
-      <MaskInput
-        id="rfc"
-        name="rfc"
-        label="R.F.C"
-        :mask="options"
-        placeholder="XXXX-######-XXX"
-        required
-      />
-      <TextInput
-        id="nombreFiscal"
-        name="nombreFiscal"
-        label="Nombre fiscal"
-        :max-length="50"
-        required
-      />
-      <SelectInput
-        id="regimenFiscalId"
-        name="regimenFiscalId"
-        label="Régimen Fiscal"
-        :options="regimenFiscalStore.fiscalRegimes"
-        option-label="descripcion"
-        option-value="id"
-        option-filter="descripcion"
-        required
-      />
-    </form>
-  </template>
+    <MaskInput
+      id="rfc"
+      name="rfc"
+      label="R.F.C"
+      :mask="options"
+      placeholder="XXXX-######-XXX"
+      required
+    />
+    <TextInput
+      id="nombreFiscal"
+      name="nombreFiscal"
+      label="Nombre fiscal"
+      :max-length="50"
+      required
+    />
+    <SelectInput
+      id="regimenFiscalId"
+      name="regimenFiscalId"
+      label="Régimen Fiscal"
+      :options="regimenFiscalStore.fiscalRegimes"
+      option-label="descripcion"
+      option-value="id"
+      option-filter="descripcion"
+      required
+    />
+  </form>
   <div
     class="border-t-2 pt-2"
   >
@@ -47,7 +39,6 @@
         form="fiscalDataForm"
         type="submit"
         class="btn-primary"
-        :disabled="isLoading"
       >
         Guardar
       </button>
@@ -69,10 +60,10 @@ import TextInput from '@/modules/common/components/TextInput.vue';
 import { rfcPFRegex, rfcPMRegex } from '@/modules/common/utils/regex';
 import { useRegimenFiscalStore } from '@/modules/catalog/regimen-fiscal/stores/regimen-fiscal.store';
 import { useUserProfileStore } from '../stores/user-profile.store';
-import Loading from '@/modules/common/components/Loading.vue';
 import { useToast } from 'vue-toastification';
+import { useLoadingView } from '@/modules/common/composables/useLoadingView';
 
-const isLoading = ref(false);
+const loadingView = useLoadingView()
 const toast = useToast();
 
 const options = ref<MaskInputOptions>({
@@ -122,22 +113,24 @@ const { handleSubmit, resetForm } = useForm({
 });
 
 const onSubmit = handleSubmit(async (values) => {
-  isLoading.value = true;
+  loadingView.setIsLoading(true);
   const response = await userProfileStore.saveFiscalData(values)
 
   if(!response.success) toast.error(response.message);
 
   toast.success('La información fiscal se guardó correctamente');
-  isLoading.value = false;
+  loadingView.setIsLoading(false);
 });
 
 
 onMounted(async ()=> {
+  loadingView.setIsLoading(true);
   resetForm({values: {
     rfc: userProfileStore.persona?.rfc,
     nombreFiscal: userProfileStore.persona?.nombreFiscal,
     regimenFiscalId: userProfileStore.persona?.regimenFiscal.id,
   }})
+  loadingView.setIsLoading(false);
 })
 
 </script>

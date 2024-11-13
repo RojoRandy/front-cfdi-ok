@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    @apply bg-slate-200
+  }
+}
+
 @layer components {
   .btn-primary {
     @apply px-4 py-2 rounded-md bg-cyan-600 text-white hover:bg-cyan-700 focus:ring-4 focus:ring-cyan-200 disabled:bg-gray-400 disabled:cursor-not-allowed;

@@ -30,14 +30,6 @@ app.use(Toast, {
   closeButton: 'button',
   icon: true,
   rtl: false,
-  filterBeforeCreate: (toast: any, toasts: any) => {
-    if (toasts.filter((t: any) => t.type === toast.type).length !== 0) {
-      // Returning false discards the toast
-      return false;
-    }
-    // You can modify the toast if you want
-    return toast;
-  },
 });
 
 app.mount('#app');

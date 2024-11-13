@@ -131,6 +131,7 @@
         form="fiscalAddressForm"
         type="submit"
         class="btn-primary"
+        :disabled="isLoading"
       >
         Guardar
       </button>
@@ -150,7 +151,9 @@ import SelectInput from '@/modules/common/components/SelectInput.vue';
 import { useUserProfileStore } from '../stores/user-profile.store';
 import Loading from '@/modules/common/components/Loading.vue';
 import { useToast } from 'vue-toastification';
+import { useLoadingView } from '@/modules/common/composables/useLoadingView';
 
+const loadingView = useLoadingView()
 const userProfileStore = useUserProfileStore()
 const {getPaises, getEstadosByPais, getMunicipiosByEstado, getAddressByPostalCode} = useAddress()
 const paises = ref<Pais[]>([]);
@@ -185,14 +188,14 @@ const { handleSubmit, resetForm, values } = useForm({
 });
 
 const onSubmit = handleSubmit(async (values)=> {
-  isLoading.value = true;
+  loadingView.setIsLoading(true);
   
   const response = await userProfileStore.saveFiscalAddress(values)
 
   if(!response.success) toast.error(response.message);
   
   toast.success('El domicilio fiscal se guardó correctamente');
-  isLoading.value = false;
+  loadingView.setIsLoading(false);
 })
 
 const handleChangePostalCode = async (event: any) => {
@@ -280,9 +283,9 @@ const setInitialValues = async(persona: Persona) => {
 }
 
 onMounted(async()=> {
-  isLoading.value = true;
+  loadingView.setIsLoading(true);
   await handleLoadPaises();
   await setInitialValues(userProfileStore.persona!);
-  isLoading.value = false;
+  loadingView.setIsLoading(false);
 })
 </script>

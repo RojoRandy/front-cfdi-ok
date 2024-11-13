@@ -1,26 +1,22 @@
 <template>
-  <LoadingView v-if="isLoading"/>
-  <template v-else>
+  <div class="bg-white m-4 rounded-lg p-4 shadow-lg shadow-slate-300">
     <ProfileHeader />
   
-    <div class="mb-20">
-      <TabSections 
-        :sections="sections"
-      >
-      <template #body="bodyProps">
-        <FiscalData 
-          v-if="bodyProps.activeSection!.name === 'FiscalData'" 
-          />
-        <FiscalAddress v-if="bodyProps.activeSection!.name === 'FiscalAddress'"/>
-        <AccountInfo v-if="bodyProps.activeSection!.name === 'AccountInfo'"/>
-        <SendMails v-if="bodyProps.activeSection!.name === 'SendMails'"/>
-        <DigitalStamp v-if="bodyProps.activeSection!.name === 'DigitalStamp'"/>
-  
-      </template>
-      </TabSections>
-    </div>
-  </template>
+    <TabSections 
+      :sections="sections"
+    >
+    <template #body="bodyProps">
+      <FiscalData 
+        v-if="bodyProps.activeSection!.name === 'FiscalData'" 
+        />
+      <FiscalAddress v-else-if="bodyProps.activeSection!.name === 'FiscalAddress'"/>
+      <AccountInfo v-else-if="bodyProps.activeSection!.name === 'AccountInfo'"/>
+      <SendMails v-else-if="bodyProps.activeSection!.name === 'SendMails'"/>
+      <DigitalStamp v-else-if="bodyProps.activeSection!.name === 'DigitalStamp'"/>
+    </template>
+    </TabSections>
 
+  </div>
 </template>
 
 <script setup lang="ts">
