@@ -4,10 +4,11 @@
       id="userProfile"
       ref="userProfile"
       @click="onToggleClick"
-      class="flex flex-row items-center justify-between bg-slate-800 rounded-full h-full w-52 transition-all duration-200 hover:bg-cyan-600 hover:cursor-pointer"
+      class="flex flex-row items-center justify-center md:justify-between bg-slate-800 rounded-full 
+      h-full w-10 md:w-52 transition-all duration-200 hover:bg-cyan-600 hover:cursor-pointer"
     >
-      <span id="userProfileName" class="text-white flex-1 text-center select-none">{{ authStore.fullName }}</span>
-      <ProfileIcon id="userProfileIcon" class="fill-white w-9 h-9 mr-1" />
+      <span id="userProfileName" class="hidden md:block text-white flex-1 text-center select-none transition-all duration-200">{{ authStore.fullName }}</span>
+      <ProfileIcon id="userProfileIcon" class="fill-white w-9 h-9" />
     </div>
     <div
       v-if="toggleMenu"

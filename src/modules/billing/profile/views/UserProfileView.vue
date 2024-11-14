@@ -69,7 +69,6 @@ const sections = [
 
 onMounted(async()=> {
   loadingView.setIsLoading(true);
-  await userProfileStore.getUserProfile();
   await regimenFiscalStore.getAllFiscalRegimes();
   await mailServerStore.getMailServers();
   loadingView.setIsLoading(false);

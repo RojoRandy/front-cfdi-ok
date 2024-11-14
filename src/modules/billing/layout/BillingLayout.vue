@@ -14,15 +14,29 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import Sidebar from './components/Sidebar.vue';
 import TopMenu from './components/TopMenu.vue';
 import LoadingView from '@/modules/common/components/LoadingView.vue';
 
+import { useLoadingView } from '@/modules/common/composables/useLoadingView';
+import { useUserProfileStore } from '../profile/stores/user-profile.store';
+import { useAuthStore } from '@/modules/auth/stores/auth.store';
+
+const loadingView = useLoadingView()
+const userProfileStore = useUserProfileStore();
+const authStore = useAuthStore()
 const showSidebar = ref(false);
 
 const toggleSidebar = () => {
   showSidebar.value = !showSidebar.value;
 };
+
+onMounted(async ()=> {
+  loadingView.setIsLoading(true);
+  await authStore.checkAuthStatus();
+  await userProfileStore.getUserProfile();
+  loadingView.setIsLoading(false);
+})
 
 </script>

@@ -15,17 +15,17 @@ const router = useRouter();
 const route = useRoute();
 
 authStore.$subscribe(
-  (_, state) => {
+  async (_, state) => {
     if (state.authStatus === AuthStatus.Checking) {
-      authStore.checkAuthStatus();
+      await authStore.checkAuthStatus();
       return;
     }
-
+    
     if (route.path.includes('/auth') && state.authStatus === AuthStatus.Authenticated) {
       router.replace({ name: 'dashboard' });
       return;
     }
-
+    
     if(state.authStatus === AuthStatus.Unauthenticated ) {
       router.replace({ name: 'login' })
       return;
