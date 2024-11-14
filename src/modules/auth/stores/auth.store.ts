@@ -13,7 +13,6 @@ export const useAuthStore = defineStore('AuthStore', () => {
   const authStatus = ref<AuthStatus>(AuthStatus.Checking);
   const user = ref<User | undefined>();
   const token = ref(useLocalStorage('token', ''));
-  const isLoading = ref(false)
 
   const signIn = async (email: string, password: string): Promise<ResponseDto> => {
     try {
@@ -90,17 +89,12 @@ export const useAuthStore = defineStore('AuthStore', () => {
       return false;
     }
   }
-
   
-  const setIsLoading = (value: boolean) => {
-    isLoading.value = value;
-  }
 
   return {
     user,
     token,
     authStatus,
-    isLoading,
 
     //Getter
     isChecking: computed(() => authStatus.value === AuthStatus.Checking),
@@ -119,6 +113,5 @@ export const useAuthStore = defineStore('AuthStore', () => {
     register,
     checkAuthStatus,
     postRegister,
-    setIsLoading
   };
 });
