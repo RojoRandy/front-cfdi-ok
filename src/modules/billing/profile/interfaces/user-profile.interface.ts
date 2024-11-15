@@ -4,8 +4,8 @@ import type { User } from "@/modules/auth/interfaces";
 export interface EmisorProfile {
   id: number;
   nombreComercial: string;
-  persona: Persona;
-  usuario: User;
+  persona?: Persona;
+  usuario?: User;
 }
 
 export interface Persona {

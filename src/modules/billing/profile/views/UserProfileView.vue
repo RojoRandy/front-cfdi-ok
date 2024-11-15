@@ -6,9 +6,7 @@
       :sections="sections"
     >
     <template #body="bodyProps">
-      <FiscalData 
-        v-if="bodyProps.activeSection!.name === 'FiscalData'" 
-        />
+      <FiscalData v-if="bodyProps.activeSection!.name === 'FiscalData'" />
       <FiscalAddress v-else-if="bodyProps.activeSection!.name === 'FiscalAddress'"/>
       <AccountInfo v-else-if="bodyProps.activeSection!.name === 'AccountInfo'"/>
       <SendMails v-else-if="bodyProps.activeSection!.name === 'SendMails'"/>
@@ -33,9 +31,7 @@ import { useLoadingView } from '@/modules/common/composables/useLoadingView';
 const loadingView = useLoadingView()
 import { useRegimenFiscalStore } from '@/modules/catalog/regimen-fiscal/stores/regimen-fiscal.store';
 import { useMailServerStore } from '@/modules/catalog/mail-server/stores/mail-server.store';
-import { useUserProfileStore } from '../stores/user-profile.store';
 
-const userProfileStore = useUserProfileStore();
 const regimenFiscalStore = useRegimenFiscalStore();
 const mailServerStore = useMailServerStore();
 

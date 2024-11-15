@@ -46,11 +46,11 @@
     </div>
 
     <div>
-      <slot
-        name="body"
-        :activeSection="getActiveSection()"
-        >Body</slot
-      >
+        <slot
+          name="body"
+          :activeSection="getActiveSection()"
+          >Body</slot
+        >
     </div>
 
     <div

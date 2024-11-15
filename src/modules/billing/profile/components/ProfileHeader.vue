@@ -87,7 +87,7 @@ const resize = () => {
   commercialNameRef.value!.style.height = commercialNameRef.value!.scrollHeight + 'px';
 };
 
-onMounted(async () => {
+onMounted(() => {
   nombreComercial.value = userProfileStore.nombreComercial ?? '';
   resize();
 });

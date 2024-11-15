@@ -21,11 +21,12 @@ import { SaveCsdCertificateFileAction } from "../actions/save-csd-certificate-fi
 import { SaveCsdPublicKeyFileAction } from "../actions/save-csd-public-key-file.action";
 import { SaveCsdCredentialsAction } from "../actions/save-csd-crendentials.action";
 import type { SaveCsdCredentialsRequest } from "../interfaces/save-csd-credentials.interface";
+import { useLocalStorage, useStorage } from "@vueuse/core";
 
 
 export const useUserProfileStore = defineStore('useUserProfileStore', ()=> {
   const authStore = useAuthStore();
-  const userProfile = ref<EmisorProfile>()
+  const userProfile = useStorage<EmisorProfile>('emisorProfile', {id: 0, nombreComercial: '', })
   const csdCredentials = ref<CsdCredentials>()
   
   const getUserProfile = async (): Promise<ResponseDto> => {
@@ -38,12 +39,16 @@ export const useUserProfileStore = defineStore('useUserProfileStore', ()=> {
           message: response.message
         };
       }
-
+      
       userProfile.value = response.data;
       return response;
     } catch (error) {
       return lackConnectionErrorResponse;
     }
+  }
+
+  const clearUserProfile = () => {
+    userProfile.value = {id: 0, nombreComercial: '', };
   }
 
   const saveFiscalData = async (fiscalDataRequest: SaveFiscalDataRequest): Promise<ResponseDto> => {
@@ -217,6 +222,7 @@ export const useUserProfileStore = defineStore('useUserProfileStore', ()=> {
     nombreComercial: computed(() => userProfile.value?.nombreComercial),
 
     //Actions
+    clearUserProfile,
     getUserProfile,
     saveFiscalData,
     saveCommercialName,
