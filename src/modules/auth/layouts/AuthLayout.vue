@@ -1,6 +1,6 @@
 <template>
   <!-- component -->
-  <div class="md:bg-white md:flex justify-center items-center h-screen">
+  <div class="bg-white md:flex justify-center items-center h-screen">
     <!-- Left: Image -->
     <div class="w-full md:w-1/2 px-6 lg:px-24">
       <RouterView />

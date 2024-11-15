@@ -18,7 +18,7 @@
         :key="el + index"
         v-model="digits[index]"
         :autofocus="index === 0"
-        :placeholder="index + 1 + ''"
+        :placeholder="'_'"
         :maxlength="1"
         @keydown="handleKeyDown($event, index)"
       />
@@ -74,8 +74,6 @@ const handleKeyDown = function (event: any, index: number) {
       //@ts-ignore
       (otpCont.value!.children)[index-1].focus();
     } 
-
-    return;
   }
 
   if ((new RegExp('^([0-9])$')).test(event.key)) {
@@ -87,14 +85,18 @@ const handleKeyDown = function (event: any, index: number) {
     }
   }
 
-  if (isDigitsFull()) {
-    emit('update:otp', digits.join(''))
-  }
+  // if (isDigitsFull()) {
+  //   emit('update:otp', digits.join(''))
+  // }
+  emit('update:otp', {
+    value: digits.join(''),
+    isCompleted: isDigitsFull()
+  })
 }
 
 const isDigitsFull = function () {
   for (const elem of digits) {
-    if (elem == null || elem == undefined) {
+    if (elem == null || elem == undefined || elem === '') {
       return false;
     }
   }

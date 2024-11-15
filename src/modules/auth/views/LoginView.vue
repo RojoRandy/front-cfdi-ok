@@ -22,8 +22,10 @@
         type="password"
         label="Contraseña"
       />
-      <label class="italic text-cyan-500 hover:underline hover:cursor-pointer select-none self-end"
-        >Olvidaste tu contraseña</label
+      <label 
+        class="italic text-cyan-500 hover:underline hover:cursor-pointer select-none self-end"
+        @click="isPasswordRecovery = true"
+        >¿Olvidaste tu contraseña?</label
       >
       <button
         type="submit"
@@ -56,6 +58,11 @@
     :is-new-account="isNewAccount"
     @cancel="isNewAccount = false"
   />
+
+  <PasswordRecovery 
+    :is-open="isPasswordRecovery"
+    @cancel="isPasswordRecovery = false"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -69,9 +76,13 @@ import TextInput from '@/modules/common/components/TextInput.vue';
 import RegisterView from './RegisterView.vue';
 
 import { useAuthStore } from '../stores/auth.store';
+import PasswordRecovery from './PasswordRecovery.vue';
 
 const authStore = useAuthStore();
 const toast = useToast();
+const isNewAccount = ref(false);
+const isPasswordRecovery = ref(false);
+const loading = ref(false);
 
 const validationSchema = toTypedSchema(
   zod.object({
@@ -88,7 +99,6 @@ const { handleSubmit } = useForm({
   validationSchema,
 });
 
-const loading = ref(false);
 
 const onSubmit = handleSubmit(async (values) => {
   loading.value = true;
@@ -100,5 +110,4 @@ const onSubmit = handleSubmit(async (values) => {
   loading.value = false;
 });
 
-const isNewAccount = ref(false);
 </script>

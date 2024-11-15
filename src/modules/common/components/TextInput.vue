@@ -25,6 +25,7 @@
           :maxlength="maxLength"
           :autofocus="autofocus"
           :disabled="disabled"
+          :autocomplete="autocomplete"
         />
         <div
           v-if="type === 'password'"
@@ -70,6 +71,7 @@ interface Props {
   minLength?: number;
   maxLength?: unknown;
   disabled?: boolean;
+  autocomplete?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -80,7 +82,8 @@ const props = withDefaults(defineProps<Props>(), {
   required: false,
   minLength: 0,
   maxLength: undefined,
-  disabled: false
+  disabled: false,
+  autocomplete: ""
 });
 
 const emit = defineEmits(['onBlur', 'update:modelValue'])

@@ -8,6 +8,10 @@ import type { RegisterRequest } from '../interfaces/register.request';
 import { useLocalStorage } from '@vueuse/core';
 import type { ResponseDto } from '@/modules/common/interfaces/api-schema-response';
 import { lackConnectionErrorResponse } from '@/modules/common/error/general.exception';
+import { PasswordRecoveryAction } from '../actions/password-recovery.action';
+import { VerifyPasswordRecoveryTokenAction } from '../actions/verify-password-code.action';
+import { UpdatePasswordAction } from '../actions/update-password.action';
+import type { UpdatePasswordRequest } from '../interfaces/update-password.interface';
 
 export const useAuthStore = defineStore('AuthStore', () => {
   const authStatus = ref<AuthStatus>(AuthStatus.Checking);
@@ -91,6 +95,30 @@ export const useAuthStore = defineStore('AuthStore', () => {
   }
   
 
+  const passwordRecovery = async(email: string) => {
+    try {
+      return PasswordRecoveryAction(email);
+    } catch (error) {
+      return lackConnectionErrorResponse;
+    }
+  }
+
+  const verifyPasswordRecoveryToken = async(email: string, token: string) => {
+    try {
+      return VerifyPasswordRecoveryTokenAction(email, token);
+    } catch (error) {
+      return lackConnectionErrorResponse;
+    }
+  }
+
+  const updatePassword = async(request: UpdatePasswordRequest) => {
+    try {
+      return UpdatePasswordAction(request);
+    } catch (error) {
+      return lackConnectionErrorResponse;
+    }
+  }
+
   return {
     user,
     token,
@@ -113,5 +141,8 @@ export const useAuthStore = defineStore('AuthStore', () => {
     register,
     checkAuthStatus,
     postRegister,
+    passwordRecovery,
+    verifyPasswordRecoveryToken,
+    updatePassword
   };
 });
