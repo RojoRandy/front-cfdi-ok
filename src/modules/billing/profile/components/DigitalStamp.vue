@@ -14,8 +14,8 @@
         />
         <span
           :class="{
-            'text-green-500': userProfileStore.csdCredentials?.certificadoSubido,
-            'text-red-500': !userProfileStore.csdCredentials?.certificadoSubido,
+            'text-emerald-500': userProfileStore.csdCredentials?.certificadoSubido,
+            'text-red-400': !userProfileStore.csdCredentials?.certificadoSubido,
           }">
           {{ userProfileStore.csdCredentials?.certificadoSubido  ? 'Certificado subido' : 'Certificado pendiente de subir' }}
         </span>
@@ -39,8 +39,8 @@
         />
         <span
           :class="{
-            'text-green-500': userProfileStore.csdCredentials?.llavePublicaSubida,
-            'text-red-500': !userProfileStore.csdCredentials?.llavePublicaSubida,
+            'text-emerald-500': userProfileStore.csdCredentials?.llavePublicaSubida,
+            'text-red-400': !userProfileStore.csdCredentials?.llavePublicaSubida,
           }">
           {{ userProfileStore.csdCredentials?.llavePublicaSubida  ? 'Llave pública subida' : 'Llave pública pendiente de subir' }}
         </span>

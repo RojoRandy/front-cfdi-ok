@@ -16,7 +16,7 @@
     }"
     aria-label="Sidebar">
     <div 
-      class="h-full flex flex-col overflow-y-auto bg-cyan-600 py-2"
+      class="h-full flex flex-col overflow-y-auto bg-theme-interface py-2"
       >
       <SidebarMenuItem 
         v-for="item in menuItems" 

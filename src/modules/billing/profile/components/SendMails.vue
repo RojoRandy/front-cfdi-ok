@@ -1,5 +1,5 @@
 <template>
-  <p class="mt-4 text-md text-slate-700">Este correo se utiliza para enviar las facturas a tus clientes, los datos se encuentran cifrados para tu seguridad</p>
+  <p class="mt-4 text-sm text-theme-text-paragraph">Este correo se utiliza para enviar las facturas a tus clientes, los datos se encuentran cifrados para tu seguridad</p>
   <form
     id="sendMailsForm" 
     @submit="onSubmit"

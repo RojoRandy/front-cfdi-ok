@@ -2,13 +2,13 @@
   <div class="flex flex-col items-center md:items-start mt-4 mb-6 md:my-0">
     <!-- Perfil de empresa -->
     <div class="m-2 md:mx-8 my-4">
-      <h1 class="text-lg font-semibold">Perfil de la empresa</h1>
-      <p class="text-sm text-slate-500">Actualiza el logo y los detalles de tu empresa aquí</p>
+      <h1 class="text-xl font-semibold">Perfil de la empresa</h1>
+      <p class="text-sm text-theme-text-paragraph">Actualiza el logo y los detalles de tu empresa aquí</p>
     </div>
 
     <!-- Nombre comercial -->
     <div
-      class="grid grid-cols-1 md:grid-cols-2 justify-items-center m-2 md:mx-8 my-4 "
+      class="grid grid-cols-1 md:grid-cols-2 justify-items-center m-2 md:mx-8 my-2 "
     >
       <div class="flex flex-col w-full justify-center md:justify-start gap-2 px-8 md:p-0 my-2">
         <div class="flex flex-row gap-2">
@@ -29,20 +29,20 @@
             type="button"
             @click="onSaveCommercialName"
           >
-            <SaveIcon class="fill-black w-6 h-6 hover:cursor-pointer  hover:fill-cyan-600" />
+            <SaveIcon class="fill-theme-interface-secondary w-6 h-6 hover:cursor-pointer hover:fill-theme-interface" />
           </button>
           <button
             v-else
             type="button"
             @click="onEditComercialName"
           >
-            <EditIcon class="fill-black w-6 h-6 hover:cursor-pointer hover:fill-cyan-600" />
+            <EditIcon class="fill-theme-interface-secondar w-6 h-6 hover:cursor-pointer hover:fill-theme-interface" />
           </button>
         </div>
-        <span class="text-sm text-slate-500">Nombre comercial de la persona o empresa que emite las facturas </span>
-        <span class="text-md mt-4 text-slate-700">Los campos con un asterisco <span class="text-red-500">*</span> son necesarios para poder generar tus facturas electrónicas</span>
+        <span class="text-sm text-theme-text-paragraph">Nombre comercial de la persona o empresa que emite las facturas </span>
       </div>
     </div>
+    <span class="text-sm text-theme-text-paragraph px-8 my-2">Los campos con un asterisco <span class="text-red-500">*</span> son necesarios para poder generar tus facturas electrónicas</span>
   </div>
 </template>
 

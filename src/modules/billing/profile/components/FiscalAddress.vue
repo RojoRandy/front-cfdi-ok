@@ -203,6 +203,7 @@ const handleChangePostalCode = async (event: any) => {
   if(postalCode === '' || previousPostalCode.value === postalCode) return;
   previousPostalCode.value = postalCode;
   try {
+    await handleLoadColonias(postalCode)
     const address = await getAddressByPostalCode(postalCode);
     colonias.value = address?.colonias.map((colonia, index)=>({colonia})) ?? [];
     
@@ -259,11 +260,30 @@ const handleLoadMunicipios = async(estadoId: number)=> {
   municipios.value = await getMunicipiosByEstado(estadoId);
 }
 
+const handleLoadColonias = async(codigoPostal: string) => {
+  const address = await getAddressByPostalCode(codigoPostal);
+  colonias.value = address?.colonias.map((colonia, index)=>({colonia})) ?? [];
+  
+  // if(!address || !address.colonias.length) {
+  //   disableAddressByPostalCode.value = false;
+  //   resetForm({
+  //     values: {
+  //       codigoPostal: address!.codigoPostal,
+  //       paisId: 0,
+  //       estadoId: 0,
+  //       municipioId: 0
+  //     }
+  //   });
+  //   return
+  // }
+}
+
 const setInitialValues = async(persona: Persona) => {
   if(!persona) return;
   await handleLoadPaises();
   await handleLoadEstados(persona.pais.id!);
   await handleLoadMunicipios(persona.estado.id!);
+  await handleLoadColonias(persona.codigoPostal);
   resetForm({
     values: {
       codigoPostal: persona.codigoPostal,

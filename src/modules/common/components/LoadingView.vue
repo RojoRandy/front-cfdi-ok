@@ -39,7 +39,7 @@ onMounted(()=>{
   display: grid;
   border: 4px solid #0000;
   border-radius: 50%;
-  @apply border-r-cyan-600;
+  @apply border-r-theme-interface;
   animation: l15 1s infinite linear;
 }
 .loader::before,

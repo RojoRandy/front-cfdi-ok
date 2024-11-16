@@ -1,5 +1,5 @@
 <template>
-  <p class="mt-4 text-md text-slate-700">Recuerda que estos campos deben estar ingresados exactamente igual a como se muestra en tu Constancia de Situacion Fiscal</p>
+  <p class="mt-4 text-sm text-theme-text-paragraph">Recuerda que estos campos deben estar ingresados exactamente igual a como se muestra en tu Constancia de Situacion Fiscal</p>
   <form
     id="fiscalDataForm"
     @submit="onSubmit"
@@ -29,6 +29,7 @@
       option-value="id"
       option-filter="descripcion"
       required
+      class="md:col-span-2"
     />
   </form>
   <div

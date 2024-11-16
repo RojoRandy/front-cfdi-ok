@@ -21,13 +21,16 @@ import { SaveCsdCertificateFileAction } from "../actions/save-csd-certificate-fi
 import { SaveCsdPublicKeyFileAction } from "../actions/save-csd-public-key-file.action";
 import { SaveCsdCredentialsAction } from "../actions/save-csd-crendentials.action";
 import type { SaveCsdCredentialsRequest } from "../interfaces/save-csd-credentials.interface";
-import { useLocalStorage, useStorage } from "@vueuse/core";
+import { useStorage } from "@vueuse/core";
+import type { Theme } from "../../layout/interfaces/theme.interface";
+import { SaveEmisorThemeAction } from "../actions/save-emisor-theme.action";
 
 
 export const useUserProfileStore = defineStore('useUserProfileStore', ()=> {
   const authStore = useAuthStore();
   const userProfile = useStorage<EmisorProfile>('emisorProfile', {id: 0, nombreComercial: '', })
-  const csdCredentials = ref<CsdCredentials>()
+  const csdCredentials = ref<CsdCredentials>();
+  const isCustomThemeVisible = ref(false);
   
   const getUserProfile = async (): Promise<ResponseDto> => {
     try {
@@ -49,6 +52,7 @@ export const useUserProfileStore = defineStore('useUserProfileStore', ()=> {
 
   const clearUserProfile = () => {
     userProfile.value = {id: 0, nombreComercial: '', };
+    isCustomThemeVisible.value = false;
   }
 
   const saveFiscalData = async (fiscalDataRequest: SaveFiscalDataRequest): Promise<ResponseDto> => {
@@ -213,9 +217,29 @@ export const useUserProfileStore = defineStore('useUserProfileStore', ()=> {
     }
   }
 
+  const saveEmisorTheme = async (theme: Theme) => {
+    try {
+      const response = await SaveEmisorThemeAction(authStore.emisorId, theme);
+
+      if(!response.success){
+        return {
+          success: false,
+          message: response.message
+        };
+      }
+      
+      userProfile.value = response.data;
+      await authStore.checkAuthStatus();
+      return response
+    } catch (error) {
+      return lackConnectionErrorResponse;
+    }
+  }
+
   return {
     userProfile,
     csdCredentials,
+    isCustomThemeVisible,
     
     //Getter
     persona: computed(()=> userProfile.value?.persona),
@@ -232,6 +256,7 @@ export const useUserProfileStore = defineStore('useUserProfileStore', ()=> {
     getCsdCredentials,
     saveCsdCredentials,
     saveCsdCertificateFile,
-    saveCsdPublicKeyFile
+    saveCsdPublicKeyFile,
+    saveEmisorTheme
   }
 }) 

@@ -7,7 +7,7 @@
     <template v-slot:body>
 
       <template v-if="passwordUpdated">
-        <div class="text-center font-md">
+        <div class="text-center font-md my-2 space-y-4">
           <p>Tu contraseña se actualizo de forma correcta</p>
           <p>Guarda tu contraseña en un lugar seguro y no la compartas con nadie.</p>
         </div>

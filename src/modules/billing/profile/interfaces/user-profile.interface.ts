@@ -1,4 +1,5 @@
 import type { User } from "@/modules/auth/interfaces";
+import type { Theme } from "../../layout/interfaces/theme.interface";
 
 
 export interface EmisorProfile {
@@ -6,6 +7,7 @@ export interface EmisorProfile {
   nombreComercial: string;
   persona?: Persona;
   usuario?: User;
+  preferencias?: Preferencias;
 }
 
 export interface Persona {
@@ -46,4 +48,8 @@ export interface Estado {
 export interface Municipio {
   id?: number;
   nombre: string;
+}
+
+export interface Preferencias {
+  theme: Theme;
 }

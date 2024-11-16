@@ -13,7 +13,7 @@
         <div class="flex flex-col max-h-[calc(80vh)] md:max-h-[calc(90vh)]">
           <header
             id="modalTitle"
-            class="flex flex-row justify-between px-4 py-4 border-b-2 text-xl font-semibold"
+            class="flex flex-row justify-between px-4 py-4 text-xl font-semibold"
           >
             <div class="w-full text-center">
               <slot name="header">
@@ -22,7 +22,7 @@
             </div>
             <Close
               aria-label="Close modal"
-              class="fill-cyan-600 hover:cursor-pointer hover:fill-cyan-700"
+              class="fill-theme-icons hover:cursor-pointer"
               @click="$emit('close')"
             />
           </header>

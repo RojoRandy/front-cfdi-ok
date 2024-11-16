@@ -9,9 +9,11 @@ import { useRouter, useRoute } from 'vue-router';
 import { AuthStatus } from './modules/auth/interfaces';
 import { useAuthStore } from './modules/auth/stores/auth.store';
 import { useUserProfileStore } from './modules/billing/profile/stores/user-profile.store';
+import { useTheme } from './modules/billing/layout/composable/useTheme';
 
 const authStore = useAuthStore();
 const userProfileStore = useUserProfileStore()
+const {applyTheme} = useTheme();
 
 const router = useRouter();
 const route = useRoute();
@@ -30,6 +32,7 @@ authStore.$subscribe(
     
     if(state.authStatus === AuthStatus.Unauthenticated ) {
       userProfileStore.clearUserProfile();
+      applyTheme();
       router.replace({ name: 'login' })
       return;
     }

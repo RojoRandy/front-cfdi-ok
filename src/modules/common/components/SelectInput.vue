@@ -2,12 +2,12 @@
   <div class="flex flex-col gap-2">
     <label
       :for="name"
-      class="text-cyan-950 font-semibold text-sm"
+      class="text-theme-text font-semibold text-sm"
     >
       {{ label }}
       <span
         v-if="required"
-        class="text-red-400 font-semibold text-sm"
+        class="text-red-500 font-semibold text-sm"
         >*</span
       >
     </label>
@@ -16,21 +16,14 @@
         ref="selectInput"
         class="relative"
       >
-        <!-- Este tendra la etiqueta a mostrar -->
-        <!-- <input
-          :ref="ref"
-          :id="id"
-          :name="name"
-          v-model="value"
-          class="hidden"
-          @input="handleChange"
-        /> -->
 
         <div
           tabindex="0"
           id="optionLabelInput"
           name="optionLabelInput"
-          class="block w-full text-sm border-2 h-auto border-gray-300 px-4 py-2 rounded-md text-cyan-900 focus:border-2 focus:border-cyan-600"
+          class="w-full text-sm border-2 h-auto px-4 py-2 rounded-md 
+          text-theme-text 
+          focus:border-2 focus:border-theme-interface"
           :class="inputTextClasses"
           :placeholder="placeholder"
           @click="onToggleClick"
@@ -48,15 +41,15 @@
           >
         </div>
         <div
-          class="absolute inset-y-0 end-0 flex items-center z-20 px-3 text-gray-400 rounded-e-md"
+          class="absolute inset-y-0 end-0 flex items-center z-10 px-3 rounded-e-md"
           :class="{
-            'cursor-pointer focus:outline-none focus:text-blue-600': !disabled,
+            'cursor-pointer focus:outline-none focus:border-theme-interface': !disabled,
             'cursor-default': disabled
           }"
           @click="onToggleClick"
         >
           <ArrowDown
-            class="fill-cyan-600 h-7 w-7 transition-all"
+            class="fill-theme-icons h-7 w-7 transition-all"
             :class="{
               'rotate-180': toggleMenu,
               'cursor-default': disabled
@@ -77,7 +70,10 @@
             name="optionFilterInput"
             type="text"
             v-model="optionFilterInput"
-            class="w-full text-sm border-2 border-gray-300 px-4 py-2 rounded-md text-cyan-900 placeholder:italic hover:border-cyan-500 focus:outline-none focus:ring-0"
+            class="w-full text-sm border-2 px-4 py-2 rounded-md text-theme-text 
+            placeholder:italic 
+            hover:border-theme-interface 
+            focus:outline-none focus:ring-0"
             placeholder="Buscar"
             @input="handleFilterOptions"
             @keydown="handleKeydown"
@@ -88,7 +84,7 @@
                 v-for="(option, index) in optionItems"
                 @click="handleSelectOption(option)"
                 :key="getOptionLabel(option) + index"
-                class="mx-1 hover:cursor-pointer hover:bg-cyan-600 p-2 rounded-md hover:text-white"
+                class="mx-1 hover:cursor-pointer hover:bg-theme-interface p-2 rounded-md hover:text-theme-interface-foreground"
               >
                 <span>{{ getOptionLabel(option) }}</span>
               </div>
@@ -265,10 +261,10 @@ const handleSelectOption = (option: any) => {
 
 const inputTextClasses = computed(() => {
   return {
-    'border-red-400 hover:border-red-400 focus:border-red-400 focus:outline-none focus:ring-0':
+    'border-theme-destructive hover:border-theme-destructive focus:border-theme-destructive focus:outline-none focus:ring-0':
       errorMessage.value,
-    'hover:border-cyan-500 hover:cursor-pointer focus:outline-none focus:ring-0 disabled:bg-white': !props.disabled,
-    'bg-gray-100 hover:cursor-default': props.disabled
+    'hover:border-theme-interface hover:cursor-pointer focus:outline-none focus:ring-0 bg-white disabled:bg-white': !props.disabled,
+    'bg-disabled hover:cursor-default': props.disabled
   };
 });
 

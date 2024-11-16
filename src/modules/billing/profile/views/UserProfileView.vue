@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white m-4 rounded-lg p-4 shadow-lg shadow-slate-300">
+  <div class="bg-white m-4 rounded-lg p-4 shadow-lg">
     <ProfileHeader />
   
     <TabSections 

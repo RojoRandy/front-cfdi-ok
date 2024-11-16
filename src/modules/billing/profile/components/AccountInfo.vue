@@ -1,5 +1,5 @@
 <template>
-  <p class="mt-4 text-md text-slate-700">Son las credenciales con las que ingresas a tu cuenta de Facturación Ok</p>
+  <p class="mt-4 text-sm text-theme-text-paragraph">Son las credenciales con las que ingresas a tu cuenta de Facturación Ok</p>
 
   <form
     id="accountInfoForm"

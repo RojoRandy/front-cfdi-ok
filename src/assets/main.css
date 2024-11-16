@@ -4,16 +4,76 @@
 
 @layer base {
   :root {
-    @apply bg-slate-200
+    --background: #d4d4d8;
+    --foreground: #164e63;
+
+    /* Interfaz */
+    --primary-interface: #0891b2;
+    --primary-interface-foreground: #fafafa;
+
+    --secondary-interface: #1e293b;
+    --secondary-interface-foreground: #fafafa;
+
+    /* Texto */
+    --primary-foreground: #164e63;
+    --secondary-foreground: #083344;
+    --paragraph-foreground: #64748b;
+
+    /* Botones */
+    --primary-button: #0891b2;
+    --primary-button-foreground: #fafafa;
+    --primary-button-hover: #0e7490;
+    --primary-button-ring: #a5f3fc;
+
+    --secondary-button: #fafafa;
+    --secondary-button-foreground: #083344;
+    --secondary-button-hover: #e2e8f0;
+    --secondary-button-ring: #e2e8f0;
+
+    /* Iconos */
+    --primary-icon: #0891b2;
+    --secondary-icon: #fafafa;
+
+    /* Border */
+    --border: #d4d4d4;
+
+    /* Success */
+    --success: #10b981;
+
+    /* Destructive*/
+    --destructive: #f87171;
+    --destructive-foreground: #f87171;
+
+
+    /* Disabled */
+    --disabled: #d1d5db;
+    --disabled-secondary: #cbd5e1;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply px-4 py-2 rounded-md bg-cyan-600 text-white hover:bg-cyan-700 focus:ring-4 focus:ring-cyan-200 disabled:bg-gray-400 disabled:cursor-not-allowed;
+    @apply px-4 py-2 rounded-md
+    bg-theme-button text-theme-button-foreground
+    hover:bg-theme-button-hover 
+    focus:ring-4 focus:ring-theme-button-ring
+    disabled:bg-disabled disabled:cursor-not-allowed;
   }
   .btn-secondary {
-    @apply border-2 border-gray-300 px-4 py-2 rounded-md focus:outline-none hover:bg-gray-100 hover:text-cyan-600 focus:ring-4 focus:ring-gray-100 disabled:bg-gray-200 disabled:text-cyan-950 disabled:cursor-not-allowed;
+    @apply px-4 py-2 rounded-md
+    border-2 bg-theme-button-secondary text-theme-button-secondary-foreground
+    hover:bg-theme-button-secondary-hover hover:text-theme-button-secondary-foreground
+    focus:outline-none focus:ring-4 focus:ring-theme-button-secondary-ring
+    disabled:bg-disabled disabled:text-foreground disabled:cursor-not-allowed;
   }
 }
 
@@ -24,9 +84,9 @@
   }
   ::-webkit-scrollbar-track {
     width: 100vh;
-    @apply bg-gray-100
+    @apply bg-background
   }
   ::-webkit-scrollbar-thumb {
-    @apply bg-cyan-600 border-2 border-white hover:bg-cyan-800
+    @apply bg-theme-interface border-2 border-white hover:bg-cyan-800
   }
 }

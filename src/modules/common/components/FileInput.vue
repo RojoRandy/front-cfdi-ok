@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-2">
     <label
       :for="name"
-      class="text-cyan-950 font-semibold text-sm"
+      class="text-theme-text font-semibold text-sm"
       >
       {{ label }}
       <span v-if="required" class="text-red-400 font-semibold text-sm">*</span>
@@ -15,14 +15,14 @@
         :id="id"
         :name="name"
         type="file"
-        class="w-full text-sm text-stone-500
+        class="w-full text-sm 
           file:mr-4 file:py-2 file:px-4
           file:border-0 file:rounded-full
           file:text-sm file:font-semibold
-        file:bg-cyan-600 file:text-white
-          file:disabled:bg-gray-400 file:disabled:cursor-not-allowed
+        file:bg-theme-button file:text-theme-button-foreground
+          file:disabled:bg-disabled file:disabled:cursor-not-allowed
           hover:file:cursor-pointer
-        hover:file:bg-cyan-700"
+        hover:file:bg-theme-button-hover"
         :class="inputTextClasses"
         :autofocus="autofocus"
         :disabled="disabled"
