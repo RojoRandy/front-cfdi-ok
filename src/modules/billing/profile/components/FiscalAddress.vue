@@ -167,7 +167,9 @@ const toast = useToast();
 
 const validationSchema = toTypedSchema(
   zod.object({
-    codigoPostal: zod.string(),
+    codigoPostal: zod
+        .string({ message: 'El código postal es necesario para la facturación'})
+        .min(5, { message: 'El código postal debe ser de almenos 5 numeros'}),
     calle: zod.string().optional(),
     numeroExterior: zod.string().optional(),
     numeroInterior: zod.string().optional(),

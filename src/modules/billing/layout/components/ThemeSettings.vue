@@ -18,7 +18,7 @@
           @click="$emit('close')"
         />
       </div>
-      <div class="h-18 bg-white rounded-lg p-2 flex flex-col gap-2">
+      <div class="h-18 bg-white rounded-lg p-2 flex flex-col gap-2 shadow-md border">
         <img class="bg-black w-full h-12" />
         <button
           type="button"
@@ -28,15 +28,28 @@
         </button>
       </div>
       <div
-        v-for="(section, indexSection) in themeSettings.themeSections"
-        class="bg-white rounded-md shadow-md"
+        v-for="(section, indexSection) in themeSections"
+        class="bg-white rounded-md shadow-md border"
       >
-        <div class="flex flex-row justify-between items-center p-2">
-          <span class="flex-1 text-center">{{ section.name }}</span>
-          <ArrowDown class="h-6 w-6 fill-black" />
+        <div 
+          class="flex flex-row justify-between items-center p-2 hover:cursor-pointer"
+          @click="handleCollapseSection(indexSection)"
+          >
+          <span class="flex-1 text-center select-none">{{ section.name }}</span>
+          <ArrowDown 
+            class="h-6 w-6 fill-black"           
+            :class="{
+              'rotate-180': !section.isActive,
+              }"
+          />
         </div>
         <ul v-for="(color, indexColor) in section.colors">
-          <li class="flex flex-row px-2 py-2 gap-4">
+          <li 
+            class="flex flex-row px-2 py-2 gap-4 transition duration-150" 
+            :class="{
+              'hidden': !section.isActive
+            }"
+          >
             <input
               type="color"
               :value="color.value"
@@ -88,12 +101,24 @@ const emits = defineEmits(['close']);
 const { getTheme, applyTheme } = useTheme();
 const themeSettings = ref<Theme>(getTheme.value);
 const userProfileStore = useUserProfileStore();
-const toast = useToast();
 const loadingView = useLoadingView();
+const toast = useToast();
+
+const themeSections = ref<any[]>([]);
 
 watchEffect(()=> {
   themeSettings.value = getTheme.value;
+  themeSections.value = themeSettings.value.themeSections.map(themeSection=>{
+    return {
+      ...themeSection,
+      isActive: false
+    }
+  });
 })
+
+const handleCollapseSection = (index: number) => {
+  themeSections.value[index].isActive = !themeSections.value[index].isActive;
+}
 
 const handleChangeColor = (indexSection: number, indexColor: number, event: any) => {
   if(!event.target?.value) {

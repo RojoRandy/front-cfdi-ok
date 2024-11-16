@@ -97,7 +97,7 @@
       </div>
       <span
         v-if="showErrors"
-        class="text-[14px] text-red-400 mx-4"
+        class="text-[14px] text-theme-destructive mx-4"
       >
         &nbsp; {{ errorMessage }}
       </span>

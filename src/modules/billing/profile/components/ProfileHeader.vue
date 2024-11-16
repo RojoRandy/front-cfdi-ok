@@ -2,7 +2,7 @@
   <div class="flex flex-col items-center md:items-start mt-4 mb-6 md:my-0">
     <!-- Perfil de empresa -->
     <div class="m-2 md:mx-8 my-4">
-      <h1 class="text-xl font-semibold">Perfil de la empresa</h1>
+      <h1 class="text-xl text-theme-text font-semibold">Perfil de la empresa</h1>
       <p class="text-sm text-theme-text-paragraph">Actualiza el logo y los detalles de tu empresa aquí</p>
     </div>
 
@@ -16,7 +16,7 @@
             id="nombreComercial"
             name="nombreComercial"
             ref="commercialNameRef"
-            class="text-md flex-1 md:text-xl h-20 md:h-10 font-semibold disabled:bg-white resize-none border-b-2 overflow-hidden"
+            class="text-md text-theme-text flex-1 md:text-xl h-20 md:h-10 font-semibold disabled:bg-white resize-none border-b-2 overflow-hidden"
             type="text"
             maxlength="100"
             @input="resize"

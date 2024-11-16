@@ -45,7 +45,7 @@
       </div>
       <span
         v-if="showErrors"
-        class="text-sm text-red-400 mx-4"
+        class="text-sm text-theme-destructive mx-4"
       >
         &nbsp; {{ errorMessage }}
       </span>
