@@ -52,4 +52,5 @@ export interface Municipio {
 
 export interface Preferencias {
   theme: Theme;
+  logo_url: string;
 }

@@ -9,7 +9,7 @@
         >
           <MenuSidebar class="fill-theme-icons w-[30px] h-[30px]" />
         </button>
-        Logotipo
+        <img class="h-12 w-[200px] md:w-[264px] object-contain" :src="logoSrc">
       </div>
       <ProfileMenu />
     </div>
@@ -20,7 +20,17 @@
 <script setup lang="ts">
 import MenuSidebar from '@/icons/SidebarIcon.vue';
 import ProfileMenu from './ProfileMenu.vue';
+import { useUserProfileStore } from '../../profile/stores/user-profile.store';
+import { computed } from 'vue';
+import cfdiOkLogo from '@/assets/images/cfdiOk.png'
+
 
 defineEmits(['toggleSidebar']);
+const userProfileStore = useUserProfileStore()
+
+const logoSrc = computed(()=>{
+  if(userProfileStore.userProfile.preferencias?.logo_url) return userProfileStore.userProfile.preferencias?.logo_url;
+  else return cfdiOkLogo;
+})
 
 </script>

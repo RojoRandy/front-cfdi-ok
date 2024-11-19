@@ -24,6 +24,7 @@ import type { SaveCsdCredentialsRequest } from "../interfaces/save-csd-credentia
 import { useStorage } from "@vueuse/core";
 import type { Theme } from "../../layout/interfaces/theme.interface";
 import { SaveEmisorThemeAction } from "../actions/save-emisor-theme.action";
+import { SaveEmisorLogoAction } from "../actions/save-emisor-logo.action";
 
 
 export const useUserProfileStore = defineStore('useUserProfileStore', ()=> {
@@ -236,6 +237,24 @@ export const useUserProfileStore = defineStore('useUserProfileStore', ()=> {
     }
   }
 
+  const saveEmisorLogo = async (file: any) => {
+    try {
+      const response = await SaveEmisorLogoAction(authStore.emisorId, file);
+
+      if(!response.success){
+        return {
+          success: false,
+          message: response.message
+        };
+      }
+      
+      userProfile.value = response.data
+      return response
+    } catch (error) {
+      return lackConnectionErrorResponse;
+    }
+  }
+
   return {
     userProfile,
     csdCredentials,
@@ -257,6 +276,7 @@ export const useUserProfileStore = defineStore('useUserProfileStore', ()=> {
     saveCsdCredentials,
     saveCsdCertificateFile,
     saveCsdPublicKeyFile,
-    saveEmisorTheme
+    saveEmisorTheme,
+    saveEmisorLogo
   }
 }) 

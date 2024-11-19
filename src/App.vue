@@ -13,7 +13,7 @@ import { useTheme } from './modules/billing/layout/composable/useTheme';
 
 const authStore = useAuthStore();
 const userProfileStore = useUserProfileStore()
-const {applyTheme} = useTheme();
+const {applyTheme, getTheme} = useTheme();
 
 const router = useRouter();
 const route = useRoute();
@@ -32,7 +32,7 @@ authStore.$subscribe(
     
     if(state.authStatus === AuthStatus.Unauthenticated ) {
       userProfileStore.clearUserProfile();
-      applyTheme();
+      applyTheme(getTheme.value);
       router.replace({ name: 'login' })
       return;
     }
