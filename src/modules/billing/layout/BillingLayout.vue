@@ -14,7 +14,7 @@
   />
 
   <LoadingView/>
-  <div class="transition-all ease-in-out duration-300 w-[calc(100vw - 4rem)] md:ml-16">
+  <div class="transition-all ease-in-out duration-300 w-[calc(100vw - 4rem)] md:ml-16 p-8">
     <RouterView />
   </div>
 

@@ -75,6 +75,12 @@
     focus:outline-none focus:ring-4 focus:ring-theme-button-secondary-ring
     disabled:bg-disabled disabled:text-foreground disabled:cursor-not-allowed;
   }
+  .cfdi-input {
+    @apply w-full text-theme-text text-sm border-2 px-4 py-2 rounded-md 
+    placeholder:italic 
+    hover:border-theme-interface 
+    focus:ring-0 focus:outline-none focus:border-theme-interface
+  }
 }
 
 @layer utilities {

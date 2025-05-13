@@ -1,4 +1,3 @@
-
 <template>
   <div
     class="fixed z-20 inset-0 flex justify-center items-center bg-slate-600 bg-opacity-80 hover:cursor-pointer"
@@ -19,7 +18,8 @@
       class="h-full flex flex-col overflow-y-auto bg-theme-interface py-2"
       >
       <SidebarMenuItem 
-        v-for="item in menuItems" 
+        v-for="(item, index) in menuItems" 
+        :key=index
         :icon="item.icon"
         :text="item.text"
         :route-name="item.routeName"

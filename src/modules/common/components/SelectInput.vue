@@ -16,7 +16,6 @@
         ref="selectInput"
         class="relative"
       >
-
         <div
           tabindex="0"
           id="optionLabelInput"
@@ -61,7 +60,7 @@
           v-if="toggleMenu"
           ref="floatingOptions"
           :style="floatingStyles"
-          class="flex flex-col w-auto min-w-[300px] max-w-[500px] gap-1 z-30 bg-white rounded-lg p-2 border-2 shadow-lg"
+          class="z-30 flex flex-col w-auto min-w-[300px] max-w-[500px] gap-1 bg-white rounded-lg p-2 border-2 shadow-lg"
         >
           <input
             ref="optionFilterInputRef"

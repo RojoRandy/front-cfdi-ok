@@ -25,7 +25,7 @@ export const billingRoutes: RouteRecordRaw = {
     {
       path: '/clients',
       name: 'clients',
-      component: () => import('@/modules/billing/views/ClientsView.vue')
+      component: () => import('@/modules/billing/client/views/ClientsView.vue')
     },
     {
       path: '/products',

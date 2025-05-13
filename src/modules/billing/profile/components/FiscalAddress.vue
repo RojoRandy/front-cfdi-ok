@@ -54,7 +54,6 @@
       />
     </template>
 
-    <!-- TODO: Agregar evento on change -->
     <SelectInput
       id="paisId"
       name="paisId"
@@ -265,19 +264,6 @@ const handleLoadMunicipios = async(estadoId: number)=> {
 const handleLoadColonias = async(codigoPostal: string) => {
   const address = await getAddressByPostalCode(codigoPostal);
   colonias.value = address?.colonias.map((colonia, index)=>({colonia})) ?? [];
-  
-  // if(!address || !address.colonias.length) {
-  //   disableAddressByPostalCode.value = false;
-  //   resetForm({
-  //     values: {
-  //       codigoPostal: address!.codigoPostal,
-  //       paisId: 0,
-  //       estadoId: 0,
-  //       municipioId: 0
-  //     }
-  //   });
-  //   return
-  // }
 }
 
 const setInitialValues = async(persona: Persona) => {
